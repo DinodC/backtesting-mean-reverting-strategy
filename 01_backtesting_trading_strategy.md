@@ -1,33 +1,37 @@
 
 # Backtesting a Trading Strategy Part 1
 
-## Or How to Scrape S&P Constituents Tickers Using Python Package BeautifulSoup
+## How to Scrape S&P Constituents Tickers Using Python
 
 ## Introduction
-Backtesting is a tool we can use to measure the performance of a trading strategy using historical data. The backtesting process is composed of three parts: first, we need to decide the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); second, we need to retrieve historical data for the universe of securities; and last part is where we implement our trading strategy using the historical data collected. In this article, we will tackle the initial step in the backtesting process, that is, to determine the universe of securities. If we focus our attention on trading US equities, then a natural choice is the Standard and Poor's 500 Index which is composed of shares of the 500 largest companies in the United States, and more importantly, it provides the most liquid stocks. Aside from the S&P 500 Index, we could consider the S&P MidCap 400 and S&P SmallCap 600 indices.
+Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. deciding where we to implement the trading strategy using the historical data collected.
+
+In this article, I will discuss the initial step in the backtesting process: determining the universe of securities. If we focus our attention on trading US equities, then a natural choice is the Standard and Poor's 500 Index which is composed of shares of the 500 largest companies in the United States. The S&P 500 also provides the most liquid stocks. We can also consider the S&P MidCap 400 and S&P SmallCap 600 indices.
 
 ## Standard & Poor's Dow Jones Indices
-In this section, we provide a comparison of the different S&P indices which we could consider as possible universe of stocks.
+This section provides a comparison of the different S&P indices which can be considered as possible universe of stocks.
 
 ### S&P 500 Index
-- The [S&P 500 Index](https://us.spindices.com/indices/equity/sp-500) or the _S&P 500_ is a market capitalization-weighted index of the 500 largest US companies.
-- The S&P 500 is viewed as the best gauge of large-cap US equity market.
-- The S&P 500 has 505 constituents with a median capitalization of USD 22.3B. 
+- is a market capitalization-weighted index of the 500 largest US companies
+- is viewed as the best gauge of large-cap US equity market
+- has 505 constituents with a median capitalization of USD 22.3B
 
 ### S&P MidCap 400 Index
-- The [S&P MidCap 400 Index](https://us.spindices.com/indices/equity/sp-400) or the _S&P 400_ is a market capitalization-weighted index.
-- The S&P 400 serves as a benchmark for mid-cap US equity market.
-- The S&P 400 has 400 constituents with a median capitalization of USD 4.2B.
+- is a market capitalization-weighted index
+- serves as a benchmark for mid-cap US equity market
+- has 400 constituents with a median capitalization of USD 4.2B
 
 ### S&P SmallCap 600 Index
-- The [S&P SmallCap 600 Index](https://us.spindices.com/indices/equity/sp-600) or the _S&P 600_ is a market capitalization-weighted index.
-- The S&P 600 serves as a benchmark for small-cap US equity market.
-- The S&P has 601 constituents with a median capitalization of USD 1.2B.
+- is a market capitalization-weighted index
+- serves as a benchmark for small-cap US equity market
+- has 601 constituents with a median capitalization of USD 1.2B
 
-After identifying potential universe of stocks candidates, we need to collect the list of constituents for each candidate universe. However, the list of constituents is not available on the official S&P Dow Jones Indices website https://us.spindices.com. Moreover, I was informed by their Hong Kong office that the constituents are only provided to product subscribers. Consequently, we need to find alternative data providers. After a quick search on Google, two candidates presented themselves: [Wikipedia](https://en.wikipedia.org); and [Barchart](https://www.barchart.com). Wikipedia provides the S&P constituents in the form of a HTML table, which we will need to retrieve using Python package [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) for web scraping. While, Barchart provides the S&P constituents as convenient downloadable CSV files. You just need to create a basic account with them, which is free.
+After identifying potential universe of stocks candidates, we need to collect the list of constituents for each candidate universe. The list of constituents is not available on the official S&P Dow Jones Indices website https://us.spindices.com. The constituents are only provided to product subscribers. We therefore, need to find alternative data providers. After a quick search on Google, two candidates are available: [Wikipedia](https://en.wikipedia.org); and [Barchart](https://www.barchart.com). Wikipedia provides the S&P constituents in the form of a HTML table, which we will need to retrieve using Python package [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) for web scraping. Barchart provides the S&P constituents as convenient downloadable CSV files. You just need to create a basic account with them, which fortunately is free.
 
-## Retrieve S&P Constituents
-Below we present how to retrieve S&P constituents step-by-step. First, we collect the S&P tickers from Wikipedia, and then from Barchart. After, we compare the S&P constituents from the two providers. But before that we will go through a quick review on the S&P 500, S&P 400 and S&P600 indices.
+## Retrieving S&P Constituents
+### Step By Step
+1. Collect the S&P tickers from Wikipedia, and then from Barchart.
+2. Compare the S&P constituents from the two providers.
 
 You can find the code below on https://github.com/DinodC/backtesting-trading-strategy.
 
@@ -97,30 +101,30 @@ The code below scrapes data using [BeautifulSoup](https://www.crummy.com/softwar
 
 ```python
 for i in input_file:
-    
+
     # Get URL    
     r = re.get(input_file[i])
-    
-    # Create a soup object 
+
+    # Create a soup object
     soup = BeautifulSoup(r.text)
-    
+
     # Find S&P constituents table
     table = soup.find('table', attrs={'class', 'wikitable sortable'})
-    
+
     # Get the rows containing the tickers
     tickers = table.find_all('a', attrs={'class', 'external text'})
     # find_all returns tickers and SEC fillings, get tickers only
     tickers = tickers[::2]
-    
+
     # Create a list containing the tickers
     for j in range(len(tickers)):
         sp_wikipedia[i].append(tickers[j].text)
-        
+
     # Save the list to a file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_wikipedia[i], f)
     f.close()
-    
+
 ```
 
 Check the number of constituents, it should be equal to 505
@@ -230,16 +234,16 @@ The code below reads the data from the csv file, stores it to a DataFrame object
 
 ```python
 for i in input_file:
-    
+
     # Read data to a DataFrame
     data = pd.read_csv(input_file[i])
     # Exclude the last line since it does not contain a ticker
     data = data[:-1]
-    
+
     # Create a list containing the tickers
     for j in range(len(data['Symbol'])):
         sp_barchart[i].append(data['Symbol'].iloc[j])
-        
+
     # Save the list to a file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_barchart[i], f)
@@ -558,8 +562,8 @@ len(diff_barchart_wikipedia)
 
 
 In total, Wikipedia constituents sum up to 598 only, while Barchart sum up to 601 (complete):
-- As previously noted, there are 3 tickers missing in Wikipedia list which could be due to timing difference in updating the S&P 400 and S&P 1000 lists.
-- The difference between the two providers Wikipedia and Barchart is 51 tickers, which suggests that one of the two providers has a more up to date list.
+1. As previously noted, there are 3 tickers missing in Wikipedia list which could be due to timing difference in updating the S&P 400 and S&P 1000 lists.
+2. The difference between the two providers Wikipedia and Barchart is 51 tickers, which suggests that one of the two providers has a more up to date list.
 
 ## Summary
-In this article, we identified universe of securities candidates such as the S&P 500, S&P MidCap 400 and S&P SmallCap indices. More importantly, we retrieved the constituents of each index from alternative data providers, namely Wikipedia and Barchart. The list of tickers for the S&P 500 is consistent between the two sources, while the list of tickers for the S&P MidCap 400 and S&P SmallCap 600 are not identical. In addition, there seems to be an inconsistency between the components of the S&P 400 and S&P 1000 indices from Wikipedia. As a result, we will consider the S&P constituents from Barchart in the next article where we will retrieve historical data for every ticker in every index.
+In this article, we identified universe of securities candidates such as the S&P 500, S&P MidCap 400 and S&P SmallCap indices. We retrieved the constituents of each index from alternative data providers, namely Wikipedia and Barchart. The list of tickers for the S&P 500 is consistent between the two sources, while the list of tickers for the S&P MidCap 400 and S&P SmallCap 600 are not identical. There seems to be an inconsistency between the components of the S&P 400 and S&P 1000 indices from Wikipedia. As a result, we will consider the S&P constituents from Barchart in the next article where we will retrieve historical data for every ticker in every index.
