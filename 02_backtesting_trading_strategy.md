@@ -11,7 +11,7 @@ In the previous article, I illustrated the first step in the backtesting process
 ## Retrieving S&P Constituents Historical Data
 ### Step By Step
 1. Load the S&P tickers which were gathered from the previous article.
-2. Collect the S&P constituents' 5-year historical data using Python package [pandas-datareader](https://pandas-datareader.readthedocs.io) from the [Investor Exchange (IEX)](https://iextrading.com).
+2. Collect the S&P constituents' 5-year historical data using Python package [pandas-datareader](https://pandas-datareader.readthedocs.io) from the [Investors Exchange (IEX)](https://iextrading.com).
 
 You can find the code below on https://github.com/DinodC/backtesting-trading-strategy.
 
