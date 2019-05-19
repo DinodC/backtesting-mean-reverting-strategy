@@ -4,7 +4,7 @@
 ## How to Scrape S&P Constituents Tickers Using Python
 
 ## Introduction
-Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. deciding where we to implement the trading strategy using the historical data collected.
+Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.
 
 In this article, I will discuss the initial step in the backtesting process: determining the universe of securities. If we focus our attention on trading US equities, then a natural choice is the Standard and Poor's 500 Index which is composed of shares of the 500 largest companies in the United States. The S&P 500 also provides the most liquid stocks. We can also consider the S&P MidCap 400 and S&P SmallCap 600 indices.
 
