@@ -1,7 +1,7 @@
 
-# Backtesting a Trading Strategy Part 2
+# Backtesting A Trading Strategy Part 2
 
-## How to Retrieve S&P Constituents Historical Data Using Python
+## How To Retrieve S&P Constituents Historical Data Using Python
 
 ## Introduction
 Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.  

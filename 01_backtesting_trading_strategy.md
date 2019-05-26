@@ -1,7 +1,7 @@
 
-# Backtesting a Trading Strategy Part 1
+# Backtesting A Trading Strategy Part 1
 
-## How to Scrape S&P Constituents Tickers Using Python
+## How To Scrape S&P Constituents Tickers Using Python
 
 ## Introduction
 Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.
@@ -292,7 +292,7 @@ len(sp600_barchart)
 
 
 
-## Comparison between Wikipedia and Barchart
+## Comparison Between Wikipedia and Barchart
 
 ### S&P 500 Index
 
