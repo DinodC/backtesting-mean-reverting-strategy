@@ -27,9 +27,9 @@ where $S_{i, t-1}$ is the spot price of stock $i$ at time $t-1$.
 
 ## Backtesting A Trading Strategy
 ### Step By Step
-1. Load S&P indices historical data
-2. Implement a mean-reverting trading strategy
-3. Calculate the trading strategy's performance using the Sharpe ratio
+1. Load S&P indices historical data.
+2. Implement a mean-reverting trading strategy.
+3. Calculate the trading strategy's performance using the Sharpe ratio.
 
 You can find the code on https://github.com/DinodC/backtesting-trading-strategy.
 
