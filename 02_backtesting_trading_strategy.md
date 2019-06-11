@@ -6,12 +6,12 @@
 ## Introduction
 Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.  
 
-In the previous article, I illustrated the first step in the backtesting process of determining the universe of stocks, namely the S&P 500, S&P MidCap 400 and S&P SmallCap 600 indices. In this article, I will discuss the second step of the backtesting process of collecting historical data for each constituent of the universe of stocks.
+In the previous article, I illustrated the first step in the backtesting process of determining the universe of stocks, namely the S&P 500, S&P MidCap 400 and S&P SmallCap 600 indices. In this article, I will discuss the second step of the backtesting process of collecting historical data for each constituent of the universe of stocks. 
 
 ## Retrieving S&P Constituents Historical Data
 ### Step By Step
-1. Load the S&P tickers which were gathered from the previous article.
-2. Collect the S&P constituents' 5-year historical data using Python package [pandas-datareader](https://pandas-datareader.readthedocs.io) from the [Investors Exchange (IEX)](https://iextrading.com).
+1. Load the S&P tickers which were gathered from the previous article. 
+2. Collect the S&P constituents' 5-year historical data using Python package pandas-datareader from the Investors Exchange (IEX). 
 
 You can find the code below on https://github.com/DinodC/backtesting-trading-strategy.
 
@@ -20,20 +20,8 @@ Import packages
 
 ```python
 import pandas as pd
-```
-
-
-```python
 from pandas import Series, DataFrame
-```
-
-
-```python
 import pickle
-```
-
-
-```python
 import pandas_datareader.data as web
 ```
 
@@ -52,8 +40,8 @@ Create a dictionary to map each id to a tickers file
 
 ```python
 input_file = {'sp500': 'sp500_barchart.pickle',
-              'sp400': 'sp400_barchart.pickle',
-              'sp600': 'sp600_barchart.pickle'}
+              'sp400': 'sp400_barchart.pickle', 
+              'sp600': 'sp600_barchart.pickle'} 
 ```
 
 Define a dictionary to map each id to a tickers list
@@ -74,17 +62,17 @@ Fill the tickers lists
 ```python
 for i in input_file:
     with open(input_file[i], 'rb') as f:
-
+        
         # Update tickers list        
         sp_tickers[i] = pickle.load(f)
 
         # Sort tickers list
         sp_tickers[i].sort()
-
+        
     f.close()
 ```
 
-### S&P Constituents Historical Data
+### S&P Constituents Historical Data 
 
 Define dictionary of historical data
 
@@ -102,11 +90,11 @@ Set the start and date of the historical data
 
 
 ```python
-start_date = '2014-01-01'
+start_date = '2015-01-01'
 end_date = '2020-01-01'
 ```
 
-Set the source [Investors Exchange (IEX)](https://iextrading.com) to be used
+Set the source Investors Exchange(IEX) to be used
 
 
 ```python
@@ -127,8 +115,8 @@ Retrieve historical data for each constituent of each S&P index
 
 ```python
 for i in output_file:
-
-    # Retrieve historical data
+    
+    # Retrieve historical data 
     # Note that we set number of tickers to < 100 because DataReader gives error when number of tickers > 100
     data1 = web.DataReader(sp_tickers[i][:98], source, start_date, end_date)
     data2 = web.DataReader(sp_tickers[i][98:198], source, start_date, end_date)
@@ -149,10 +137,10 @@ for i in output_file:
         sp_data[i] = pd.concat([data1, data2, data3, data4, data5, data6, data7], axis=1, sort=True)        
     else:
         pass
-
+            
     # Convert index to datetime
     sp_data[i].index = pd.to_datetime(sp_data[i].index)
-
+    
     # Save historical data to file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_data[i], f)
@@ -173,7 +161,7 @@ sp_data['sp500'].close.shape
 
 
 
-    (1258, 505)
+    (1116, 505)
 
 
 
@@ -254,128 +242,216 @@ sp_data['sp500'].close.head()
   </thead>
   <tbody>
     <tr>
-      <th>2014-05-09</th>
-      <td>37.7227</td>
-      <td>36.4477</td>
-      <td>123.5028</td>
-      <td>76.9614</td>
-      <td>43.4394</td>
-      <td>60.6682</td>
-      <td>21.59</td>
-      <td>35.0552</td>
-      <td>71.1754</td>
-      <td>59.59</td>
+      <th>2015-01-02</th>
+      <td>38.9022</td>
+      <td>51.6157</td>
+      <td>157.4188</td>
+      <td>101.1385</td>
+      <td>55.5960</td>
+      <td>84.0786</td>
+      <td>37.31</td>
+      <td>40.8010</td>
+      <td>81.3950</td>
+      <td>72.340</td>
       <td>...</td>
-      <td>25.9390</td>
-      <td>41.3795</td>
-      <td>85.0965</td>
-      <td>44.7737</td>
-      <td>26.7522</td>
-      <td>34.7281</td>
-      <td>49.9143</td>
-      <td>95.9139</td>
-      <td>27.4130</td>
-      <td>29.4467</td>
+      <td>31.3286</td>
+      <td>39.3276</td>
+      <td>77.6966</td>
+      <td>50.5866</td>
+      <td>31.5092</td>
+      <td>35.8182</td>
+      <td>47.6149</td>
+      <td>108.6834</td>
+      <td>26.6444</td>
+      <td>41.9300</td>
     </tr>
     <tr>
-      <th>2014-05-12</th>
-      <td>38.4174</td>
-      <td>37.5241</td>
-      <td>124.1869</td>
-      <td>77.9193</td>
-      <td>43.5308</td>
-      <td>61.6766</td>
-      <td>21.92</td>
-      <td>35.3070</td>
-      <td>71.5821</td>
-      <td>60.70</td>
+      <th>2015-01-05</th>
+      <td>38.1733</td>
+      <td>51.5822</td>
+      <td>155.3438</td>
+      <td>98.2893</td>
+      <td>54.5497</td>
+      <td>83.3629</td>
+      <td>37.07</td>
+      <td>40.8101</td>
+      <td>80.0207</td>
+      <td>71.980</td>
       <td>...</td>
-      <td>25.7028</td>
-      <td>42.1741</td>
-      <td>85.3302</td>
-      <td>45.0550</td>
-      <td>27.1364</td>
-      <td>35.5124</td>
-      <td>49.7835</td>
-      <td>96.7773</td>
-      <td>27.9511</td>
-      <td>29.7071</td>
+      <td>30.9730</td>
+      <td>38.6015</td>
+      <td>75.5707</td>
+      <td>50.2359</td>
+      <td>30.8218</td>
+      <td>33.5890</td>
+      <td>46.6475</td>
+      <td>112.7377</td>
+      <td>25.6460</td>
+      <td>41.6783</td>
     </tr>
     <tr>
-      <th>2014-05-13</th>
-      <td>38.7034</td>
-      <td>37.4479</td>
-      <td>122.3625</td>
-      <td>78.0415</td>
-      <td>43.3895</td>
-      <td>61.8431</td>
-      <td>21.55</td>
-      <td>35.6576</td>
-      <td>72.0251</td>
-      <td>60.81</td>
+      <th>2015-01-06</th>
+      <td>37.5786</td>
+      <td>50.7828</td>
+      <td>155.2346</td>
+      <td>98.2985</td>
+      <td>54.2797</td>
+      <td>83.8183</td>
+      <td>36.13</td>
+      <td>40.3466</td>
+      <td>79.4435</td>
+      <td>70.530</td>
       <td>...</td>
-      <td>25.7872</td>
-      <td>41.2278</td>
-      <td>85.4387</td>
-      <td>45.1908</td>
-      <td>27.3171</td>
-      <td>35.4471</td>
-      <td>50.0059</td>
-      <td>97.1610</td>
-      <td>27.5924</td>
-      <td>29.6299</td>
+      <td>31.1378</td>
+      <td>38.0468</td>
+      <td>75.1689</td>
+      <td>49.6125</td>
+      <td>30.4093</td>
+      <td>33.3915</td>
+      <td>46.0749</td>
+      <td>111.7820</td>
+      <td>24.6665</td>
+      <td>41.2717</td>
     </tr>
     <tr>
-      <th>2014-05-14</th>
-      <td>38.0360</td>
-      <td>37.0002</td>
-      <td>122.0948</td>
-      <td>78.0560</td>
-      <td>43.9464</td>
-      <td>62.2594</td>
-      <td>21.55</td>
-      <td>35.9004</td>
-      <td>71.2748</td>
-      <td>60.88</td>
+      <th>2015-01-07</th>
+      <td>38.0773</td>
+      <td>50.7540</td>
+      <td>158.5704</td>
+      <td>99.6769</td>
+      <td>56.4735</td>
+      <td>85.4914</td>
+      <td>37.28</td>
+      <td>40.6738</td>
+      <td>81.1110</td>
+      <td>71.110</td>
       <td>...</td>
-      <td>26.0234</td>
-      <td>40.9064</td>
-      <td>85.3803</td>
-      <td>44.7834</td>
-      <td>27.0686</td>
-      <td>35.2603</td>
-      <td>49.6070</td>
-      <td>96.8253</td>
-      <td>26.8278</td>
-      <td>29.5431</td>
+      <td>31.4066</td>
+      <td>38.0603</td>
+      <td>75.9306</td>
+      <td>50.8984</td>
+      <td>30.7988</td>
+      <td>33.6548</td>
+      <td>47.6017</td>
+      <td>114.5621</td>
+      <td>24.8973</td>
+      <td>42.1236</td>
     </tr>
     <tr>
-      <th>2014-05-15</th>
-      <td>37.1098</td>
-      <td>36.3810</td>
-      <td>123.1756</td>
-      <td>77.3922</td>
-      <td>43.7968</td>
-      <td>62.6632</td>
-      <td>21.20</td>
-      <td>35.2800</td>
-      <td>70.8861</td>
-      <td>60.20</td>
+      <th>2015-01-08</th>
+      <td>39.2187</td>
+      <td>51.3764</td>
+      <td>159.9603</td>
+      <td>103.5067</td>
+      <td>57.0642</td>
+      <td>85.6865</td>
+      <td>38.96</td>
+      <td>41.5098</td>
+      <td>82.3478</td>
+      <td>72.915</td>
       <td>...</td>
-      <td>25.7956</td>
-      <td>40.5850</td>
-      <td>84.1199</td>
-      <td>44.5893</td>
-      <td>26.7974</td>
-      <td>34.7654</td>
-      <td>48.9596</td>
-      <td>96.0770</td>
-      <td>26.6862</td>
-      <td>29.3696</td>
+      <td>31.7709</td>
+      <td>38.9082</td>
+      <td>77.1944</td>
+      <td>52.1550</td>
+      <td>31.6467</td>
+      <td>33.9088</td>
+      <td>48.4310</td>
+      <td>115.7784</td>
+      <td>25.2504</td>
+      <td>42.7723</td>
     </tr>
   </tbody>
 </table>
 <p>5 rows × 505 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp500'].close[['A', 'AAL', 'AAP', 'AAPL', 'ABBV']].head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>A</th>
+      <th>AAL</th>
+      <th>AAP</th>
+      <th>AAPL</th>
+      <th>ABBV</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2015-01-02</th>
+      <td>38.9022</td>
+      <td>51.6157</td>
+      <td>157.4188</td>
+      <td>101.1385</td>
+      <td>55.5960</td>
+    </tr>
+    <tr>
+      <th>2015-01-05</th>
+      <td>38.1733</td>
+      <td>51.5822</td>
+      <td>155.3438</td>
+      <td>98.2893</td>
+      <td>54.5497</td>
+    </tr>
+    <tr>
+      <th>2015-01-06</th>
+      <td>37.5786</td>
+      <td>50.7828</td>
+      <td>155.2346</td>
+      <td>98.2985</td>
+      <td>54.2797</td>
+    </tr>
+    <tr>
+      <th>2015-01-07</th>
+      <td>38.0773</td>
+      <td>50.7540</td>
+      <td>158.5704</td>
+      <td>99.6769</td>
+      <td>56.4735</td>
+    </tr>
+    <tr>
+      <th>2015-01-08</th>
+      <td>39.2187</td>
+      <td>51.3764</td>
+      <td>159.9603</td>
+      <td>103.5067</td>
+      <td>57.0642</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -457,128 +533,216 @@ sp_data['sp500'].close.tail()
   </thead>
   <tbody>
     <tr>
-      <th>2019-05-02</th>
-      <td>78.20</td>
-      <td>33.8523</td>
-      <td>166.78</td>
-      <td>209.15</td>
-      <td>78.47</td>
-      <td>77.06</td>
-      <td>264.77</td>
-      <td>78.78</td>
-      <td>179.39</td>
-      <td>279.64</td>
-      <td>...</td>
-      <td>55.92</td>
-      <td>118.90</td>
-      <td>77.29</td>
-      <td>51.50</td>
-      <td>32.95</td>
-      <td>79.54</td>
-      <td>101.74</td>
-      <td>123.21</td>
-      <td>49.48</td>
-      <td>103.15</td>
-    </tr>
-    <tr>
-      <th>2019-05-03</th>
-      <td>79.29</td>
-      <td>34.6899</td>
-      <td>163.27</td>
-      <td>211.75</td>
-      <td>78.71</td>
-      <td>79.14</td>
-      <td>271.75</td>
-      <td>78.69</td>
-      <td>176.98</td>
-      <td>285.58</td>
-      <td>...</td>
-      <td>56.58</td>
-      <td>119.02</td>
-      <td>77.47</td>
-      <td>55.05</td>
-      <td>32.95</td>
-      <td>82.29</td>
-      <td>102.72</td>
-      <td>124.31</td>
-      <td>50.05</td>
-      <td>103.75</td>
-    </tr>
-    <tr>
-      <th>2019-05-06</th>
-      <td>79.35</td>
-      <td>34.6500</td>
-      <td>161.99</td>
-      <td>208.48</td>
-      <td>79.26</td>
-      <td>78.31</td>
-      <td>268.95</td>
-      <td>79.07</td>
-      <td>176.26</td>
-      <td>283.66</td>
-      <td>...</td>
-      <td>56.51</td>
-      <td>118.81</td>
-      <td>77.13</td>
-      <td>54.73</td>
-      <td>32.65</td>
-      <td>80.08</td>
-      <td>102.41</td>
-      <td>125.55</td>
-      <td>49.68</td>
-      <td>103.33</td>
-    </tr>
-    <tr>
-      <th>2019-05-07</th>
-      <td>76.67</td>
-      <td>33.9100</td>
-      <td>160.66</td>
-      <td>202.86</td>
-      <td>77.95</td>
+      <th>2019-06-04</th>
+      <td>67.95</td>
+      <td>29.12</td>
+      <td>154.61</td>
+      <td>179.64</td>
+      <td>76.75</td>
+      <td>82.21</td>
+      <td>267.06</td>
       <td>77.46</td>
-      <td>261.98</td>
-      <td>76.91</td>
-      <td>173.94</td>
-      <td>277.07</td>
+      <td>177.97</td>
+      <td>268.71</td>
       <td>...</td>
-      <td>56.58</td>
-      <td>117.81</td>
-      <td>76.72</td>
-      <td>54.83</td>
-      <td>32.67</td>
-      <td>79.17</td>
-      <td>101.47</td>
-      <td>123.39</td>
-      <td>48.71</td>
-      <td>101.37</td>
+      <td>57.78</td>
+      <td>106.90</td>
+      <td>73.59</td>
+      <td>54.40</td>
+      <td>33.30</td>
+      <td>77.40</td>
+      <td>106.97</td>
+      <td>117.41</td>
+      <td>44.40</td>
+      <td>108.12</td>
     </tr>
     <tr>
-      <th>2019-05-08</th>
-      <td>76.61</td>
-      <td>33.7500</td>
-      <td>158.62</td>
-      <td>202.90</td>
-      <td>77.99</td>
-      <td>78.72</td>
-      <td>260.27</td>
-      <td>76.22</td>
-      <td>173.82</td>
-      <td>276.77</td>
+      <th>2019-06-05</th>
+      <td>68.35</td>
+      <td>30.36</td>
+      <td>154.61</td>
+      <td>182.54</td>
+      <td>77.06</td>
+      <td>81.65</td>
+      <td>268.80</td>
+      <td>78.69</td>
+      <td>179.56</td>
+      <td>272.86</td>
       <td>...</td>
-      <td>55.88</td>
-      <td>117.69</td>
-      <td>76.84</td>
-      <td>54.95</td>
-      <td>32.09</td>
-      <td>79.13</td>
-      <td>100.49</td>
-      <td>122.56</td>
-      <td>48.19</td>
-      <td>101.86</td>
+      <td>59.32</td>
+      <td>105.60</td>
+      <td>72.98</td>
+      <td>55.38</td>
+      <td>33.42</td>
+      <td>78.88</td>
+      <td>107.29</td>
+      <td>118.54</td>
+      <td>44.18</td>
+      <td>108.50</td>
+    </tr>
+    <tr>
+      <th>2019-06-06</th>
+      <td>69.16</td>
+      <td>30.38</td>
+      <td>154.90</td>
+      <td>185.22</td>
+      <td>77.07</td>
+      <td>81.75</td>
+      <td>269.19</td>
+      <td>80.09</td>
+      <td>180.40</td>
+      <td>274.80</td>
+      <td>...</td>
+      <td>59.80</td>
+      <td>106.01</td>
+      <td>74.31</td>
+      <td>55.63</td>
+      <td>34.03</td>
+      <td>79.15</td>
+      <td>108.42</td>
+      <td>120.31</td>
+      <td>44.24</td>
+      <td>108.89</td>
+    </tr>
+    <tr>
+      <th>2019-06-07</th>
+      <td>69.52</td>
+      <td>30.92</td>
+      <td>155.35</td>
+      <td>190.15</td>
+      <td>77.43</td>
+      <td>83.48</td>
+      <td>267.87</td>
+      <td>80.74</td>
+      <td>182.92</td>
+      <td>278.16</td>
+      <td>...</td>
+      <td>59.43</td>
+      <td>107.49</td>
+      <td>74.58</td>
+      <td>55.94</td>
+      <td>34.16</td>
+      <td>79.56</td>
+      <td>109.07</td>
+      <td>120.73</td>
+      <td>43.64</td>
+      <td>110.06</td>
+    </tr>
+    <tr>
+      <th>2019-06-10</th>
+      <td>70.29</td>
+      <td>30.76</td>
+      <td>153.52</td>
+      <td>192.58</td>
+      <td>76.95</td>
+      <td>84.77</td>
+      <td>272.43</td>
+      <td>81.27</td>
+      <td>184.44</td>
+      <td>280.34</td>
+      <td>...</td>
+      <td>59.26</td>
+      <td>110.88</td>
+      <td>74.91</td>
+      <td>57.10</td>
+      <td>34.69</td>
+      <td>80.38</td>
+      <td>108.65</td>
+      <td>121.71</td>
+      <td>43.84</td>
+      <td>110.22</td>
     </tr>
   </tbody>
 </table>
 <p>5 rows × 505 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp500'].close[['A', 'AAL', 'AAP', 'AAPL', 'ABBV']].tail()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>A</th>
+      <th>AAL</th>
+      <th>AAP</th>
+      <th>AAPL</th>
+      <th>ABBV</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2019-06-04</th>
+      <td>67.95</td>
+      <td>29.12</td>
+      <td>154.61</td>
+      <td>179.64</td>
+      <td>76.75</td>
+    </tr>
+    <tr>
+      <th>2019-06-05</th>
+      <td>68.35</td>
+      <td>30.36</td>
+      <td>154.61</td>
+      <td>182.54</td>
+      <td>77.06</td>
+    </tr>
+    <tr>
+      <th>2019-06-06</th>
+      <td>69.16</td>
+      <td>30.38</td>
+      <td>154.90</td>
+      <td>185.22</td>
+      <td>77.07</td>
+    </tr>
+    <tr>
+      <th>2019-06-07</th>
+      <td>69.52</td>
+      <td>30.92</td>
+      <td>155.35</td>
+      <td>190.15</td>
+      <td>77.43</td>
+    </tr>
+    <tr>
+      <th>2019-06-10</th>
+      <td>70.29</td>
+      <td>30.76</td>
+      <td>153.52</td>
+      <td>192.58</td>
+      <td>76.95</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -637,199 +801,303 @@ sp_data['sp500'].close.describe()
   <tbody>
     <tr>
       <th>count</th>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
       <td>...</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>51.467024</td>
-      <td>41.343656</td>
-      <td>144.824652</td>
-      <td>133.794584</td>
-      <td>66.064139</td>
-      <td>84.739733</td>
-      <td>158.525886</td>
-      <td>48.392377</td>
-      <td>116.636740</td>
-      <td>138.544952</td>
+      <td>53.682820</td>
+      <td>41.423051</td>
+      <td>146.493998</td>
+      <td>140.290845</td>
+      <td>68.852242</td>
+      <td>85.875797</td>
+      <td>179.890578</td>
+      <td>50.444850</td>
+      <td>124.099296</td>
+      <td>151.371232</td>
       <td>...</td>
-      <td>38.786547</td>
-      <td>57.890999</td>
-      <td>76.467798</td>
-      <td>53.016833</td>
-      <td>26.795565</td>
-      <td>50.742943</td>
-      <td>65.957073</td>
-      <td>111.383727</td>
-      <td>36.627797</td>
-      <td>58.504963</td>
+      <td>40.836168</td>
+      <td>61.341104</td>
+      <td>74.788485</td>
+      <td>53.898061</td>
+      <td>26.462871</td>
+      <td>53.403838</td>
+      <td>68.914116</td>
+      <td>113.058047</td>
+      <td>37.937309</td>
+      <td>62.868532</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>13.768604</td>
-      <td>6.216657</td>
-      <td>24.250751</td>
-      <td>38.325308</td>
-      <td>17.881638</td>
-      <td>9.845917</td>
-      <td>117.226499</td>
-      <td>12.213183</td>
-      <td>30.722033</td>
-      <td>68.878061</td>
+      <td>13.849508</td>
+      <td>6.496939</td>
+      <td>25.131046</td>
+      <td>37.315585</td>
+      <td>17.563078</td>
+      <td>8.968281</td>
+      <td>112.738751</td>
+      <td>12.825554</td>
+      <td>28.542652</td>
+      <td>69.639202</td>
       <td>...</td>
-      <td>8.124638</td>
-      <td>21.478398</td>
-      <td>4.883311</td>
-      <td>7.892281</td>
-      <td>3.139932</td>
-      <td>16.191694</td>
-      <td>15.459884</td>
-      <td>10.036876</td>
-      <td>10.820941</td>
-      <td>19.725507</td>
+      <td>7.633397</td>
+      <td>22.403880</td>
+      <td>4.468653</td>
+      <td>7.954859</td>
+      <td>3.160050</td>
+      <td>16.177875</td>
+      <td>15.501008</td>
+      <td>9.558257</td>
+      <td>10.788513</td>
+      <td>19.372341</td>
     </tr>
     <tr>
       <th>min</th>
       <td>32.258600</td>
       <td>24.539800</td>
       <td>79.168700</td>
-      <td>76.961400</td>
+      <td>85.976800</td>
       <td>42.066600</td>
-      <td>60.668200</td>
-      <td>20.880000</td>
+      <td>65.718100</td>
+      <td>36.130000</td>
       <td>33.935700</td>
-      <td>68.852300</td>
-      <td>59.590000</td>
+      <td>76.988100</td>
+      <td>69.990000</td>
       <td>...</td>
-      <td>25.247700</td>
-      <td>32.609200</td>
-      <td>59.643400</td>
+      <td>28.223200</td>
+      <td>34.795000</td>
+      <td>58.967500</td>
       <td>34.178400</td>
       <td>18.532600</td>
-      <td>28.968100</td>
-      <td>44.366900</td>
+      <td>28.874500</td>
+      <td>44.181800</td>
       <td>89.236100</td>
-      <td>19.008100</td>
-      <td>29.196000</td>
+      <td>18.885300</td>
+      <td>38.438700</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>39.221225</td>
-      <td>36.834425</td>
-      <td>130.553250</td>
-      <td>103.314650</td>
-      <td>52.521875</td>
-      <td>77.600350</td>
-      <td>75.840000</td>
-      <td>39.159175</td>
-      <td>90.555525</td>
-      <td>80.567500</td>
+      <td>40.231325</td>
+      <td>36.699875</td>
+      <td>137.239175</td>
+      <td>107.503100</td>
+      <td>54.802525</td>
+      <td>79.292050</td>
+      <td>94.167500</td>
+      <td>40.571050</td>
+      <td>100.310000</td>
+      <td>91.392500</td>
       <td>...</td>
-      <td>31.174375</td>
-      <td>41.414825</td>
-      <td>73.431000</td>
-      <td>46.986675</td>
-      <td>24.215550</td>
-      <td>35.094975</td>
-      <td>52.731125</td>
-      <td>102.304000</td>
-      <td>26.912550</td>
-      <td>44.327550</td>
+      <td>35.321450</td>
+      <td>43.897275</td>
+      <td>72.061175</td>
+      <td>49.581750</td>
+      <td>23.883800</td>
+      <td>35.900400</td>
+      <td>56.202700</td>
+      <td>106.314000</td>
+      <td>26.980875</td>
+      <td>46.284250</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>45.631150</td>
-      <td>40.848200</td>
-      <td>149.187400</td>
-      <td>118.695800</td>
-      <td>58.031100</td>
-      <td>84.243350</td>
-      <td>116.970000</td>
-      <td>42.809100</td>
-      <td>111.583650</td>
-      <td>105.580000</td>
+      <td>51.786950</td>
+      <td>41.052250</td>
+      <td>152.678750</td>
+      <td>135.893350</td>
+      <td>60.182250</td>
+      <td>84.772950</td>
+      <td>125.575000</td>
+      <td>44.888600</td>
+      <td>116.497350</td>
+      <td>126.590000</td>
       <td>...</td>
-      <td>38.622750</td>
-      <td>51.057700</td>
-      <td>76.828250</td>
-      <td>53.996800</td>
-      <td>26.573400</td>
-      <td>47.844950</td>
-      <td>61.595700</td>
-      <td>112.414150</td>
-      <td>31.156350</td>
-      <td>50.342300</td>
+      <td>41.031700</td>
+      <td>56.992350</td>
+      <td>75.256750</td>
+      <td>55.800150</td>
+      <td>26.286500</td>
+      <td>50.008100</td>
+      <td>63.047300</td>
+      <td>113.959300</td>
+      <td>40.436250</td>
+      <td>53.209200</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>65.193450</td>
-      <td>46.119900</td>
-      <td>161.834300</td>
-      <td>166.081025</td>
-      <td>82.894300</td>
-      <td>90.312650</td>
-      <td>236.567500</td>
-      <td>57.500400</td>
-      <td>147.791425</td>
-      <td>197.712500</td>
+      <td>66.235725</td>
+      <td>46.425700</td>
+      <td>163.304600</td>
+      <td>170.222875</td>
+      <td>85.766250</td>
+      <td>90.887375</td>
+      <td>276.560000</td>
+      <td>60.211775</td>
+      <td>152.661150</td>
+      <td>224.590000</td>
       <td>...</td>
-      <td>45.139600</td>
-      <td>68.123175</td>
-      <td>79.625850</td>
-      <td>59.650550</td>
-      <td>29.473700</td>
-      <td>66.772550</td>
-      <td>79.238550</td>
-      <td>118.954900</td>
-      <td>46.685425</td>
-      <td>76.949925</td>
+      <td>46.205200</td>
+      <td>70.171850</td>
+      <td>77.872600</td>
+      <td>60.087700</td>
+      <td>28.750200</td>
+      <td>68.681950</td>
+      <td>81.002350</td>
+      <td>120.219250</td>
+      <td>47.769625</td>
+      <td>83.072500</td>
     </tr>
     <tr>
       <th>max</th>
       <td>81.940000</td>
       <td>57.586600</td>
       <td>199.159900</td>
-      <td>230.275400</td>
+      <td>229.392000</td>
       <td>116.445400</td>
-      <td>108.207500</td>
+      <td>107.649700</td>
       <td>449.750000</td>
-      <td>79.733700</td>
-      <td>182.670000</td>
+      <td>81.270000</td>
+      <td>184.440000</td>
       <td>289.250000</td>
       <td>...</td>
-      <td>57.360000</td>
-      <td>139.720000</td>
-      <td>87.124800</td>
+      <td>59.800000</td>
+      <td>139.263300</td>
+      <td>83.828700</td>
       <td>67.795300</td>
       <td>35.000000</td>
-      <td>83.820000</td>
-      <td>104.390000</td>
+      <td>83.549000</td>
+      <td>109.070000</td>
       <td>130.912800</td>
-      <td>57.511000</td>
-      <td>103.750000</td>
+      <td>57.139500</td>
+      <td>110.220000</td>
     </tr>
   </tbody>
 </table>
 <p>8 rows × 505 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp500'].close[['A', 'AAL', 'AAP', 'AAPL', 'ABBV']].describe()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>A</th>
+      <th>AAL</th>
+      <th>AAP</th>
+      <th>AAPL</th>
+      <th>ABBV</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>53.682820</td>
+      <td>41.423051</td>
+      <td>146.493998</td>
+      <td>140.290845</td>
+      <td>68.852242</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>13.849508</td>
+      <td>6.496939</td>
+      <td>25.131046</td>
+      <td>37.315585</td>
+      <td>17.563078</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>32.258600</td>
+      <td>24.539800</td>
+      <td>79.168700</td>
+      <td>85.976800</td>
+      <td>42.066600</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>40.231325</td>
+      <td>36.699875</td>
+      <td>137.239175</td>
+      <td>107.503100</td>
+      <td>54.802525</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>51.786950</td>
+      <td>41.052250</td>
+      <td>152.678750</td>
+      <td>135.893350</td>
+      <td>60.182250</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>66.235725</td>
+      <td>46.425700</td>
+      <td>163.304600</td>
+      <td>170.222875</td>
+      <td>85.766250</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>81.940000</td>
+      <td>57.586600</td>
+      <td>199.159900</td>
+      <td>229.392000</td>
+      <td>116.445400</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -846,7 +1114,7 @@ sp_data['sp400'].close.shape
 
 
 
-    (1275, 400)
+    (1128, 400)
 
 
 
@@ -903,128 +1171,208 @@ sp_data['sp400'].close.head()
   </thead>
   <tbody>
     <tr>
-      <th>2014-05-07</th>
+      <th>2015-01-02</th>
+      <td>30.2075</td>
+      <td>35.2031</td>
+      <td>59.98</td>
+      <td>19.71</td>
+      <td>30.35</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>12.0755</td>
+      <td>50.6126</td>
+      <td>43.1325</td>
+      <td>47.6957</td>
       <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>24.0506</td>
+      <td>21.53</td>
+      <td>46.9623</td>
+      <td>11.0529</td>
+      <td>34.2053</td>
+      <td>25.4410</td>
+      <td>40.63</td>
+      <td>454.3187</td>
+      <td>55.15</td>
+      <td>77.43</td>
     </tr>
     <tr>
-      <th>2014-05-08</th>
+      <th>2015-01-05</th>
+      <td>30.0891</td>
+      <td>35.4122</td>
+      <td>59.12</td>
+      <td>19.26</td>
+      <td>29.02</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>12.2162</td>
+      <td>49.9490</td>
+      <td>41.1493</td>
+      <td>46.9383</td>
       <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>23.5846</td>
+      <td>21.26</td>
+      <td>45.9472</td>
+      <td>10.8508</td>
+      <td>33.5884</td>
+      <td>24.2546</td>
+      <td>39.37</td>
+      <td>444.5068</td>
+      <td>52.53</td>
+      <td>76.34</td>
     </tr>
     <tr>
-      <th>2014-05-09</th>
-      <td>31.6652</td>
-      <td>31.9756</td>
-      <td>42.21</td>
-      <td>13.4225</td>
-      <td>32.07</td>
+      <th>2015-01-06</th>
+      <td>28.9644</td>
+      <td>35.7803</td>
+      <td>58.19</td>
+      <td>18.95</td>
+      <td>28.73</td>
       <td>NaN</td>
-      <td>9.8177</td>
-      <td>48.8031</td>
-      <td>52.6060</td>
-      <td>42.2125</td>
+      <td>12.2601</td>
+      <td>49.6634</td>
+      <td>40.9577</td>
+      <td>46.8953</td>
       <td>...</td>
-      <td>22.0474</td>
-      <td>21.94</td>
-      <td>43.5655</td>
-      <td>15.3995</td>
-      <td>28.3556</td>
-      <td>23.8807</td>
-      <td>23.75</td>
-      <td>407.6382</td>
-      <td>54.22</td>
-      <td>74.03</td>
+      <td>23.6115</td>
+      <td>19.74</td>
+      <td>45.6186</td>
+      <td>10.8784</td>
+      <td>33.1878</td>
+      <td>23.5178</td>
+      <td>37.98</td>
+      <td>441.8915</td>
+      <td>52.44</td>
+      <td>75.79</td>
     </tr>
     <tr>
-      <th>2014-05-12</th>
-      <td>32.7774</td>
-      <td>31.9510</td>
-      <td>43.03</td>
-      <td>13.9825</td>
-      <td>32.60</td>
+      <th>2015-01-07</th>
+      <td>29.8424</td>
+      <td>35.8388</td>
+      <td>60.63</td>
+      <td>19.03</td>
+      <td>29.32</td>
       <td>NaN</td>
-      <td>9.9030</td>
-      <td>49.1525</td>
-      <td>52.5488</td>
-      <td>42.1031</td>
+      <td>12.8577</td>
+      <td>49.9910</td>
+      <td>40.9290</td>
+      <td>47.7817</td>
       <td>...</td>
-      <td>22.1535</td>
-      <td>22.06</td>
-      <td>44.9818</td>
-      <td>16.2560</td>
-      <td>28.7706</td>
-      <td>24.7804</td>
-      <td>24.59</td>
-      <td>412.2492</td>
-      <td>56.60</td>
-      <td>74.23</td>
+      <td>23.8266</td>
+      <td>20.35</td>
+      <td>46.0439</td>
+      <td>10.4282</td>
+      <td>33.8087</td>
+      <td>23.5752</td>
+      <td>38.14</td>
+      <td>443.5531</td>
+      <td>52.21</td>
+      <td>77.72</td>
     </tr>
     <tr>
-      <th>2014-05-13</th>
-      <td>32.2164</td>
-      <td>31.6063</td>
-      <td>43.06</td>
-      <td>13.8000</td>
-      <td>32.02</td>
+      <th>2015-01-08</th>
+      <td>30.3258</td>
+      <td>36.0479</td>
+      <td>61.76</td>
+      <td>19.01</td>
+      <td>30.23</td>
       <td>NaN</td>
-      <td>10.0738</td>
-      <td>49.0277</td>
-      <td>52.5870</td>
-      <td>41.9076</td>
+      <td>12.2513</td>
+      <td>50.8982</td>
+      <td>41.8008</td>
+      <td>48.7198</td>
       <td>...</td>
-      <td>22.0474</td>
-      <td>21.88</td>
-      <td>44.5868</td>
-      <td>16.4166</td>
-      <td>28.7152</td>
-      <td>24.8187</td>
-      <td>23.79</td>
-      <td>412.9473</td>
-      <td>55.53</td>
-      <td>73.41</td>
+      <td>23.9789</td>
+      <td>20.32</td>
+      <td>45.8119</td>
+      <td>10.3087</td>
+      <td>34.6899</td>
+      <td>24.0919</td>
+      <td>38.35</td>
+      <td>447.3186</td>
+      <td>53.83</td>
+      <td>79.38</td>
     </tr>
   </tbody>
 </table>
 <p>5 rows × 400 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp400'].close[['AAN', 'ACC', 'ACHC', 'ACIW', 'ACM']].head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>AAN</th>
+      <th>ACC</th>
+      <th>ACHC</th>
+      <th>ACIW</th>
+      <th>ACM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2015-01-02</th>
+      <td>30.2075</td>
+      <td>35.2031</td>
+      <td>59.98</td>
+      <td>19.71</td>
+      <td>30.35</td>
+    </tr>
+    <tr>
+      <th>2015-01-05</th>
+      <td>30.0891</td>
+      <td>35.4122</td>
+      <td>59.12</td>
+      <td>19.26</td>
+      <td>29.02</td>
+    </tr>
+    <tr>
+      <th>2015-01-06</th>
+      <td>28.9644</td>
+      <td>35.7803</td>
+      <td>58.19</td>
+      <td>18.95</td>
+      <td>28.73</td>
+    </tr>
+    <tr>
+      <th>2015-01-07</th>
+      <td>29.8424</td>
+      <td>35.8388</td>
+      <td>60.63</td>
+      <td>19.03</td>
+      <td>29.32</td>
+    </tr>
+    <tr>
+      <th>2015-01-08</th>
+      <td>30.3258</td>
+      <td>36.0479</td>
+      <td>61.76</td>
+      <td>19.01</td>
+      <td>30.23</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -1082,128 +1430,208 @@ sp_data['sp400'].close.tail()
   </thead>
   <tbody>
     <tr>
-      <th>2019-05-02</th>
-      <td>56.94</td>
-      <td>47.15</td>
+      <th>2019-06-04</th>
+      <td>54.88</td>
+      <td>46.17</td>
+      <td>33.72</td>
+      <td>32.10</td>
+      <td>33.17</td>
+      <td>18.92</td>
+      <td>18.52</td>
+      <td>101.46</td>
+      <td>69.42</td>
+      <td>82.76</td>
+      <td>...</td>
+      <td>39.82</td>
+      <td>18.90</td>
+      <td>111.80</td>
+      <td>73.10</td>
+      <td>41.11</td>
+      <td>13.29</td>
+      <td>55.28</td>
+      <td>683.58</td>
+      <td>31.79</td>
+      <td>177.08</td>
+    </tr>
+    <tr>
+      <th>2019-06-05</th>
+      <td>54.97</td>
+      <td>46.97</td>
+      <td>33.30</td>
       <td>32.26</td>
-      <td>34.98</td>
-      <td>33.11</td>
-      <td>23.90</td>
-      <td>24.04</td>
-      <td>102.49</td>
-      <td>74.93</td>
-      <td>80.30</td>
+      <td>33.29</td>
+      <td>19.39</td>
+      <td>18.54</td>
+      <td>101.80</td>
+      <td>69.96</td>
+      <td>84.89</td>
       <td>...</td>
-      <td>38.39</td>
-      <td>20.31</td>
-      <td>108.52</td>
-      <td>85.60</td>
-      <td>43.71</td>
-      <td>14.39</td>
-      <td>64.10</td>
-      <td>655.30</td>
-      <td>40.19</td>
-      <td>205.94</td>
+      <td>40.63</td>
+      <td>19.04</td>
+      <td>113.86</td>
+      <td>73.68</td>
+      <td>41.08</td>
+      <td>13.09</td>
+      <td>53.93</td>
+      <td>693.19</td>
+      <td>31.69</td>
+      <td>181.59</td>
     </tr>
     <tr>
-      <th>2019-05-03</th>
-      <td>58.75</td>
-      <td>47.31</td>
-      <td>33.42</td>
-      <td>35.42</td>
-      <td>33.62</td>
-      <td>24.89</td>
-      <td>24.12</td>
-      <td>103.51</td>
-      <td>74.82</td>
-      <td>82.05</td>
+      <th>2019-06-06</th>
+      <td>54.72</td>
+      <td>47.02</td>
+      <td>33.20</td>
+      <td>32.40</td>
+      <td>33.18</td>
+      <td>19.75</td>
+      <td>17.58</td>
+      <td>101.53</td>
+      <td>69.16</td>
+      <td>85.26</td>
       <td>...</td>
-      <td>38.09</td>
-      <td>22.96</td>
-      <td>112.34</td>
-      <td>85.80</td>
-      <td>44.63</td>
-      <td>16.88</td>
-      <td>64.45</td>
-      <td>662.82</td>
-      <td>40.98</td>
-      <td>206.46</td>
+      <td>40.88</td>
+      <td>18.46</td>
+      <td>114.32</td>
+      <td>73.48</td>
+      <td>41.01</td>
+      <td>13.21</td>
+      <td>53.32</td>
+      <td>692.20</td>
+      <td>31.57</td>
+      <td>181.76</td>
     </tr>
     <tr>
-      <th>2019-05-06</th>
-      <td>59.21</td>
-      <td>47.11</td>
-      <td>33.82</td>
-      <td>35.44</td>
-      <td>33.68</td>
-      <td>24.35</td>
-      <td>23.52</td>
-      <td>104.22</td>
-      <td>74.15</td>
-      <td>82.99</td>
+      <th>2019-06-07</th>
+      <td>55.72</td>
+      <td>47.17</td>
+      <td>33.91</td>
+      <td>32.34</td>
+      <td>33.47</td>
+      <td>20.39</td>
+      <td>17.50</td>
+      <td>100.88</td>
+      <td>69.75</td>
+      <td>84.99</td>
       <td>...</td>
-      <td>37.80</td>
-      <td>23.14</td>
-      <td>111.50</td>
-      <td>87.16</td>
-      <td>44.58</td>
-      <td>16.63</td>
-      <td>65.48</td>
-      <td>666.31</td>
-      <td>40.73</td>
-      <td>206.36</td>
+      <td>40.84</td>
+      <td>18.95</td>
+      <td>113.60</td>
+      <td>73.28</td>
+      <td>41.78</td>
+      <td>13.58</td>
+      <td>53.78</td>
+      <td>690.74</td>
+      <td>31.48</td>
+      <td>188.37</td>
     </tr>
     <tr>
-      <th>2019-05-07</th>
-      <td>58.28</td>
-      <td>46.25</td>
-      <td>32.60</td>
-      <td>34.40</td>
-      <td>33.11</td>
-      <td>21.97</td>
-      <td>22.71</td>
-      <td>102.42</td>
-      <td>73.11</td>
-      <td>82.20</td>
+      <th>2019-06-10</th>
+      <td>59.23</td>
+      <td>46.81</td>
+      <td>33.81</td>
+      <td>32.75</td>
+      <td>33.45</td>
+      <td>20.79</td>
+      <td>16.76</td>
+      <td>100.83</td>
+      <td>70.11</td>
+      <td>84.70</td>
       <td>...</td>
-      <td>37.88</td>
-      <td>22.54</td>
-      <td>109.12</td>
-      <td>84.93</td>
-      <td>43.92</td>
-      <td>16.41</td>
-      <td>62.51</td>
-      <td>652.75</td>
-      <td>39.91</td>
-      <td>200.82</td>
-    </tr>
-    <tr>
-      <th>2019-05-08</th>
-      <td>57.57</td>
-      <td>45.91</td>
-      <td>32.56</td>
-      <td>34.12</td>
-      <td>33.74</td>
-      <td>22.03</td>
-      <td>22.92</td>
-      <td>102.01</td>
-      <td>73.00</td>
-      <td>80.82</td>
-      <td>...</td>
-      <td>37.32</td>
-      <td>22.41</td>
-      <td>108.25</td>
-      <td>84.28</td>
-      <td>43.69</td>
-      <td>15.40</td>
-      <td>62.68</td>
-      <td>663.53</td>
-      <td>40.57</td>
-      <td>200.05</td>
+      <td>40.63</td>
+      <td>19.40</td>
+      <td>113.63</td>
+      <td>71.51</td>
+      <td>42.55</td>
+      <td>13.80</td>
+      <td>55.55</td>
+      <td>684.74</td>
+      <td>31.95</td>
+      <td>194.51</td>
     </tr>
   </tbody>
 </table>
 <p>5 rows × 400 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp400'].close[['AAN', 'ACC', 'ACHC', 'ACIW', 'ACM']].tail()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>AAN</th>
+      <th>ACC</th>
+      <th>ACHC</th>
+      <th>ACIW</th>
+      <th>ACM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2019-06-04</th>
+      <td>54.88</td>
+      <td>46.17</td>
+      <td>33.72</td>
+      <td>32.10</td>
+      <td>33.17</td>
+    </tr>
+    <tr>
+      <th>2019-06-05</th>
+      <td>54.97</td>
+      <td>46.97</td>
+      <td>33.30</td>
+      <td>32.26</td>
+      <td>33.29</td>
+    </tr>
+    <tr>
+      <th>2019-06-06</th>
+      <td>54.72</td>
+      <td>47.02</td>
+      <td>33.20</td>
+      <td>32.40</td>
+      <td>33.18</td>
+    </tr>
+    <tr>
+      <th>2019-06-07</th>
+      <td>55.72</td>
+      <td>47.17</td>
+      <td>33.91</td>
+      <td>32.34</td>
+      <td>33.47</td>
+    </tr>
+    <tr>
+      <th>2019-06-10</th>
+      <td>59.23</td>
+      <td>46.81</td>
+      <td>33.81</td>
+      <td>32.75</td>
+      <td>33.45</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -1262,199 +1690,303 @@ sp_data['sp400'].close.describe()
   <tbody>
     <tr>
       <th>count</th>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>633.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>655.00000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
       <td>...</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>34.951951</td>
-      <td>39.217452</td>
-      <td>48.998919</td>
-      <td>22.336920</td>
-      <td>32.397027</td>
-      <td>52.542665</td>
-      <td>15.623913</td>
-      <td>77.034952</td>
-      <td>55.537789</td>
-      <td>59.215583</td>
+      <td>36.350373</td>
+      <td>39.939185</td>
+      <td>48.294091</td>
+      <td>23.224933</td>
+      <td>32.301595</td>
+      <td>51.41140</td>
+      <td>16.391984</td>
+      <td>80.359913</td>
+      <td>56.983298</td>
+      <td>61.714817</td>
       <td>...</td>
-      <td>29.498735</td>
-      <td>29.819408</td>
-      <td>62.681340</td>
-      <td>30.624876</td>
-      <td>36.782826</td>
-      <td>24.768914</td>
-      <td>53.553370</td>
-      <td>534.299863</td>
-      <td>40.549269</td>
-      <td>104.380668</td>
+      <td>30.566799</td>
+      <td>30.454978</td>
+      <td>65.714888</td>
+      <td>34.319395</td>
+      <td>37.721795</td>
+      <td>23.601209</td>
+      <td>56.632679</td>
+      <td>553.035098</td>
+      <td>36.543020</td>
+      <td>110.150184</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>9.474130</td>
-      <td>4.988952</td>
-      <td>13.759206</td>
-      <td>4.049079</td>
-      <td>3.178473</td>
-      <td>20.129762</td>
-      <td>4.052675</td>
-      <td>21.216151</td>
-      <td>9.369185</td>
-      <td>13.551177</td>
+      <td>9.912823</td>
+      <td>4.558736</td>
+      <td>14.509896</td>
+      <td>3.915154</td>
+      <td>3.229840</td>
+      <td>20.70094</td>
+      <td>3.824099</td>
+      <td>19.347078</td>
+      <td>9.236321</td>
+      <td>12.842531</td>
       <td>...</td>
-      <td>4.838681</td>
-      <td>23.446983</td>
-      <td>15.011134</td>
-      <td>25.081843</td>
-      <td>7.050096</td>
-      <td>8.713336</td>
-      <td>25.852954</td>
-      <td>71.294603</td>
-      <td>13.384499</td>
-      <td>41.295902</td>
+      <td>4.380471</td>
+      <td>24.809183</td>
+      <td>16.007057</td>
+      <td>26.167644</td>
+      <td>7.118456</td>
+      <td>8.720881</td>
+      <td>26.018152</td>
+      <td>63.682948</td>
+      <td>8.607855</td>
+      <td>43.313545</td>
     </tr>
     <tr>
       <th>min</th>
       <td>20.118600</td>
-      <td>28.081400</td>
+      <td>27.793900</td>
       <td>24.750000</td>
-      <td>13.280000</td>
+      <td>16.230000</td>
       <td>23.150000</td>
-      <td>12.570000</td>
-      <td>8.872200</td>
-      <td>46.728500</td>
-      <td>40.309000</td>
-      <td>38.117400</td>
+      <td>12.57000</td>
+      <td>10.118800</td>
+      <td>48.962000</td>
+      <td>40.929000</td>
+      <td>40.072600</td>
       <td>...</td>
-      <td>20.741700</td>
+      <td>22.220300</td>
       <td>3.780000</td>
-      <td>38.963800</td>
+      <td>38.906800</td>
       <td>9.233700</td>
       <td>25.207900</td>
-      <td>6.475600</td>
+      <td>6.455100</td>
       <td>19.560000</td>
-      <td>400.952700</td>
+      <td>433.190600</td>
       <td>15.230000</td>
       <td>46.930000</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>25.957675</td>
-      <td>34.702850</td>
-      <td>38.800000</td>
-      <td>19.390000</td>
-      <td>30.370000</td>
-      <td>40.435800</td>
-      <td>12.782225</td>
-      <td>58.763400</td>
-      <td>47.042025</td>
-      <td>45.533175</td>
+      <td>27.644000</td>
+      <td>36.077475</td>
+      <td>37.447500</td>
+      <td>20.147500</td>
+      <td>30.187500</td>
+      <td>31.95000</td>
+      <td>13.619175</td>
+      <td>61.302600</td>
+      <td>48.388325</td>
+      <td>48.854200</td>
       <td>...</td>
-      <td>24.339550</td>
-      <td>12.060000</td>
-      <td>48.495775</td>
-      <td>15.573700</td>
-      <td>30.984350</td>
-      <td>19.100425</td>
-      <td>33.210000</td>
-      <td>471.868100</td>
-      <td>32.002500</td>
-      <td>74.200000</td>
+      <td>27.656025</td>
+      <td>11.477500</td>
+      <td>51.121250</td>
+      <td>16.842825</td>
+      <td>31.480175</td>
+      <td>17.791000</td>
+      <td>35.992500</td>
+      <td>488.626100</td>
+      <td>30.380000</td>
+      <td>77.810000</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>34.380800</td>
-      <td>39.909300</td>
-      <td>46.660000</td>
-      <td>22.055000</td>
-      <td>32.425000</td>
-      <td>58.764300</td>
-      <td>14.581900</td>
-      <td>68.115800</td>
-      <td>53.312150</td>
-      <td>58.312100</td>
+      <td>36.299650</td>
+      <td>40.569000</td>
+      <td>44.080000</td>
+      <td>22.765000</td>
+      <td>32.415000</td>
+      <td>57.04690</td>
+      <td>15.141550</td>
+      <td>84.654250</td>
+      <td>57.851800</td>
+      <td>63.026700</td>
       <td>...</td>
-      <td>29.706150</td>
-      <td>21.115000</td>
-      <td>61.817800</td>
-      <td>19.171300</td>
-      <td>34.616700</td>
-      <td>23.906400</td>
-      <td>45.895000</td>
-      <td>535.896500</td>
-      <td>39.565000</td>
-      <td>90.710000</td>
+      <td>31.104450</td>
+      <td>19.085000</td>
+      <td>67.425700</td>
+      <td>20.155750</td>
+      <td>36.271400</td>
+      <td>22.852250</td>
+      <td>49.290000</td>
+      <td>566.443300</td>
+      <td>37.235000</td>
+      <td>100.645000</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>42.126325</td>
-      <td>43.673550</td>
-      <td>59.717500</td>
-      <td>24.070000</td>
-      <td>34.537500</td>
-      <td>66.641100</td>
-      <td>17.854850</td>
-      <td>97.221700</td>
-      <td>63.243550</td>
-      <td>73.313825</td>
+      <td>44.065400</td>
+      <td>43.776175</td>
+      <td>59.352500</td>
+      <td>24.852500</td>
+      <td>34.440000</td>
+      <td>66.54120</td>
+      <td>19.135775</td>
+      <td>97.804025</td>
+      <td>65.280100</td>
+      <td>73.766650</td>
       <td>...</td>
-      <td>33.338075</td>
-      <td>44.240000</td>
-      <td>74.387375</td>
-      <td>34.439375</td>
-      <td>42.889700</td>
-      <td>32.300300</td>
-      <td>64.747500</td>
-      <td>598.808925</td>
-      <td>45.815000</td>
-      <td>123.212500</td>
+      <td>33.845575</td>
+      <td>45.990000</td>
+      <td>76.265750</td>
+      <td>39.665300</td>
+      <td>43.550625</td>
+      <td>30.006425</td>
+      <td>69.072500</td>
+      <td>605.189700</td>
+      <td>43.542500</td>
+      <td>142.165000</td>
     </tr>
     <tr>
       <th>max</th>
-      <td>59.210000</td>
-      <td>48.853300</td>
+      <td>59.230000</td>
+      <td>48.353300</td>
       <td>82.970000</td>
       <td>35.520000</td>
       <td>40.130000</td>
-      <td>84.046800</td>
+      <td>84.04680</td>
       <td>28.421700</td>
-      <td>114.972900</td>
-      <td>74.930000</td>
-      <td>83.830000</td>
+      <td>113.252900</td>
+      <td>74.760300</td>
+      <td>85.260000</td>
       <td>...</td>
-      <td>39.060000</td>
+      <td>40.880000</td>
       <td>103.090000</td>
-      <td>112.340000</td>
+      <td>114.320000</td>
       <td>99.250000</td>
       <td>54.884400</td>
-      <td>45.690400</td>
+      <td>45.545800</td>
       <td>114.540000</td>
-      <td>666.310000</td>
-      <td>84.960000</td>
+      <td>693.190000</td>
+      <td>57.470000</td>
       <td>235.440000</td>
     </tr>
   </tbody>
 </table>
 <p>8 rows × 400 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp400'].close[['AAN', 'ACC', 'ACHC', 'ACIW', 'ACM']].describe()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>AAN</th>
+      <th>ACC</th>
+      <th>ACHC</th>
+      <th>ACIW</th>
+      <th>ACM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>36.350373</td>
+      <td>39.939185</td>
+      <td>48.294091</td>
+      <td>23.224933</td>
+      <td>32.301595</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>9.912823</td>
+      <td>4.558736</td>
+      <td>14.509896</td>
+      <td>3.915154</td>
+      <td>3.229840</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>20.118600</td>
+      <td>27.793900</td>
+      <td>24.750000</td>
+      <td>16.230000</td>
+      <td>23.150000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>27.644000</td>
+      <td>36.077475</td>
+      <td>37.447500</td>
+      <td>20.147500</td>
+      <td>30.187500</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>36.299650</td>
+      <td>40.569000</td>
+      <td>44.080000</td>
+      <td>22.765000</td>
+      <td>32.415000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>44.065400</td>
+      <td>43.776175</td>
+      <td>59.352500</td>
+      <td>24.852500</td>
+      <td>34.440000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>59.230000</td>
+      <td>48.353300</td>
+      <td>82.970000</td>
+      <td>35.520000</td>
+      <td>40.130000</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -1471,7 +2003,7 @@ sp_data['sp600'].close.shape
 
 
 
-    (1258, 601)
+    (1116, 601)
 
 
 
@@ -1552,128 +2084,216 @@ sp_data['sp600'].close.head()
   </thead>
   <tbody>
     <tr>
-      <th>2014-05-09</th>
-      <td>17.57</td>
-      <td>19.6925</td>
-      <td>30.3797</td>
-      <td>35.88</td>
-      <td>13.26</td>
-      <td>19.7560</td>
-      <td>62.85</td>
-      <td>24.2267</td>
+      <th>2015-01-02</th>
+      <td>10.79</td>
+      <td>21.1378</td>
+      <td>36.1497</td>
+      <td>48.42</td>
+      <td>26.51</td>
+      <td>24.3685</td>
+      <td>76.09</td>
+      <td>26.1460</td>
       <td>NaN</td>
-      <td>6.48</td>
+      <td>10.20</td>
       <td>...</td>
+      <td>10.0733</td>
+      <td>23.4646</td>
+      <td>77.72</td>
+      <td>10.3510</td>
+      <td>59.7693</td>
+      <td>27.5666</td>
       <td>NaN</td>
-      <td>19.9735</td>
-      <td>77.30</td>
-      <td>9.2092</td>
-      <td>51.2889</td>
-      <td>24.7151</td>
-      <td>NaN</td>
-      <td>18.3379</td>
-      <td>23.3449</td>
-      <td>28.28</td>
+      <td>30.8228</td>
+      <td>17.9012</td>
+      <td>38.21</td>
     </tr>
     <tr>
-      <th>2014-05-12</th>
-      <td>17.44</td>
-      <td>20.4546</td>
-      <td>30.1511</td>
-      <td>36.36</td>
-      <td>14.06</td>
-      <td>20.1009</td>
-      <td>64.66</td>
-      <td>24.8687</td>
+      <th>2015-01-05</th>
+      <td>10.65</td>
+      <td>20.4197</td>
+      <td>36.5616</td>
+      <td>46.65</td>
+      <td>25.69</td>
+      <td>24.3492</td>
+      <td>74.00</td>
+      <td>26.1920</td>
       <td>NaN</td>
-      <td>6.76</td>
+      <td>10.00</td>
       <td>...</td>
+      <td>10.1716</td>
+      <td>23.6822</td>
+      <td>78.14</td>
+      <td>10.4395</td>
+      <td>58.2492</td>
+      <td>27.3007</td>
       <td>NaN</td>
-      <td>20.0868</td>
-      <td>79.30</td>
-      <td>9.2678</td>
-      <td>52.4801</td>
-      <td>25.1019</td>
-      <td>NaN</td>
-      <td>18.5836</td>
-      <td>24.3523</td>
-      <td>28.93</td>
+      <td>29.9799</td>
+      <td>16.2561</td>
+      <td>38.94</td>
     </tr>
     <tr>
-      <th>2014-05-13</th>
-      <td>17.26</td>
-      <td>19.8847</td>
-      <td>30.1248</td>
-      <td>37.40</td>
-      <td>13.64</td>
-      <td>19.9764</td>
-      <td>63.44</td>
-      <td>24.5703</td>
+      <th>2015-01-06</th>
+      <td>10.25</td>
+      <td>20.0968</td>
+      <td>36.8481</td>
+      <td>45.66</td>
+      <td>25.57</td>
+      <td>23.8478</td>
+      <td>72.69</td>
+      <td>26.3208</td>
       <td>NaN</td>
-      <td>6.56</td>
+      <td>9.60</td>
       <td>...</td>
+      <td>10.1195</td>
+      <td>23.4144</td>
+      <td>77.59</td>
+      <td>10.4327</td>
+      <td>57.1471</td>
+      <td>26.6455</td>
       <td>NaN</td>
-      <td>19.8683</td>
-      <td>79.31</td>
-      <td>9.1571</td>
-      <td>52.0263</td>
-      <td>24.7246</td>
-      <td>NaN</td>
-      <td>18.5243</td>
-      <td>23.6579</td>
-      <td>28.52</td>
+      <td>28.7633</td>
+      <td>15.5804</td>
+      <td>38.46</td>
     </tr>
     <tr>
-      <th>2014-05-14</th>
-      <td>17.22</td>
-      <td>19.2827</td>
-      <td>29.9577</td>
-      <td>36.51</td>
-      <td>13.01</td>
-      <td>19.4878</td>
-      <td>62.94</td>
-      <td>23.9554</td>
+      <th>2015-01-07</th>
+      <td>9.85</td>
+      <td>20.2799</td>
+      <td>37.5466</td>
+      <td>46.48</td>
+      <td>25.98</td>
+      <td>23.6163</td>
+      <td>75.01</td>
+      <td>26.7532</td>
       <td>NaN</td>
-      <td>6.24</td>
+      <td>9.72</td>
       <td>...</td>
-      <td>11.9624</td>
-      <td>19.8279</td>
-      <td>77.66</td>
-      <td>9.1115</td>
-      <td>50.9485</td>
-      <td>24.1208</td>
+      <td>10.4145</td>
+      <td>23.6738</td>
+      <td>77.45</td>
+      <td>10.4667</td>
+      <td>56.7195</td>
+      <td>26.9208</td>
       <td>NaN</td>
-      <td>18.1260</td>
-      <td>22.7092</td>
-      <td>27.72</td>
+      <td>28.6764</td>
+      <td>14.5325</td>
+      <td>40.28</td>
     </tr>
     <tr>
-      <th>2014-05-15</th>
-      <td>18.15</td>
-      <td>19.1354</td>
-      <td>29.7819</td>
-      <td>36.49</td>
-      <td>13.05</td>
-      <td>19.0566</td>
-      <td>62.47</td>
-      <td>23.7474</td>
+      <th>2015-01-08</th>
+      <td>9.96</td>
+      <td>20.7812</td>
+      <td>37.7704</td>
+      <td>48.21</td>
+      <td>26.63</td>
+      <td>23.8188</td>
+      <td>75.50</td>
+      <td>27.0844</td>
       <td>NaN</td>
-      <td>6.24</td>
+      <td>9.92</td>
       <td>...</td>
-      <td>12.4454</td>
-      <td>19.8764</td>
-      <td>77.35</td>
-      <td>9.0529</td>
-      <td>50.2185</td>
-      <td>24.0831</td>
+      <td>10.4376</td>
+      <td>23.6655</td>
+      <td>78.74</td>
+      <td>10.3987</td>
+      <td>57.3086</td>
+      <td>27.6140</td>
       <td>NaN</td>
-      <td>18.0921</td>
-      <td>22.4745</td>
-      <td>27.35</td>
+      <td>29.5194</td>
+      <td>15.6881</td>
+      <td>41.40</td>
     </tr>
   </tbody>
 </table>
 <p>5 rows × 601 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp600'].close[['AAOI', 'AAON', 'AAT', 'AAWW', 'AAXN']].head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>AAOI</th>
+      <th>AAON</th>
+      <th>AAT</th>
+      <th>AAWW</th>
+      <th>AAXN</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2015-01-02</th>
+      <td>10.79</td>
+      <td>21.1378</td>
+      <td>36.1497</td>
+      <td>48.42</td>
+      <td>26.51</td>
+    </tr>
+    <tr>
+      <th>2015-01-05</th>
+      <td>10.65</td>
+      <td>20.4197</td>
+      <td>36.5616</td>
+      <td>46.65</td>
+      <td>25.69</td>
+    </tr>
+    <tr>
+      <th>2015-01-06</th>
+      <td>10.25</td>
+      <td>20.0968</td>
+      <td>36.8481</td>
+      <td>45.66</td>
+      <td>25.57</td>
+    </tr>
+    <tr>
+      <th>2015-01-07</th>
+      <td>9.85</td>
+      <td>20.2799</td>
+      <td>37.5466</td>
+      <td>46.48</td>
+      <td>25.98</td>
+    </tr>
+    <tr>
+      <th>2015-01-08</th>
+      <td>9.96</td>
+      <td>20.7812</td>
+      <td>37.7704</td>
+      <td>48.21</td>
+      <td>26.63</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -1755,128 +2375,216 @@ sp_data['sp600'].close.tail()
   </thead>
   <tbody>
     <tr>
-      <th>2019-05-02</th>
-      <td>12.09</td>
-      <td>49.52</td>
-      <td>46.12</td>
-      <td>45.91</td>
-      <td>64.26</td>
-      <td>36.75</td>
-      <td>79.07</td>
-      <td>37.42</td>
-      <td>30.29</td>
-      <td>21.27</td>
+      <th>2019-06-04</th>
+      <td>9.19</td>
+      <td>47.80</td>
+      <td>45.11</td>
+      <td>39.70</td>
+      <td>67.63</td>
+      <td>37.25</td>
+      <td>79.67</td>
+      <td>37.60</td>
+      <td>35.52</td>
+      <td>15.30</td>
       <td>...</td>
-      <td>4.39</td>
-      <td>27.89</td>
-      <td>129.49</td>
+      <td>4.08</td>
+      <td>27.03</td>
+      <td>137.79</td>
+      <td>12.54</td>
+      <td>85.75</td>
+      <td>28.42</td>
+      <td>20.95</td>
+      <td>21.32</td>
+      <td>13.16</td>
+      <td>20.65</td>
+    </tr>
+    <tr>
+      <th>2019-06-05</th>
+      <td>9.23</td>
+      <td>48.08</td>
+      <td>46.39</td>
+      <td>38.62</td>
+      <td>68.00</td>
+      <td>37.03</td>
+      <td>77.80</td>
+      <td>37.28</td>
+      <td>36.20</td>
+      <td>14.95</td>
+      <td>...</td>
+      <td>4.05</td>
+      <td>27.46</td>
+      <td>137.16</td>
+      <td>12.70</td>
+      <td>85.79</td>
+      <td>28.25</td>
+      <td>21.00</td>
+      <td>20.70</td>
+      <td>12.86</td>
+      <td>19.94</td>
+    </tr>
+    <tr>
+      <th>2019-06-06</th>
+      <td>9.30</td>
+      <td>48.18</td>
+      <td>46.39</td>
+      <td>37.99</td>
+      <td>67.97</td>
+      <td>36.90</td>
+      <td>76.95</td>
+      <td>39.78</td>
+      <td>37.06</td>
+      <td>14.89</td>
+      <td>...</td>
+      <td>3.99</td>
+      <td>27.52</td>
+      <td>136.06</td>
+      <td>12.67</td>
+      <td>86.42</td>
+      <td>28.32</td>
+      <td>20.85</td>
+      <td>20.69</td>
+      <td>13.01</td>
+      <td>18.67</td>
+    </tr>
+    <tr>
+      <th>2019-06-07</th>
+      <td>9.50</td>
+      <td>48.85</td>
+      <td>46.61</td>
+      <td>39.88</td>
+      <td>69.18</td>
+      <td>36.58</td>
+      <td>77.95</td>
+      <td>39.36</td>
+      <td>38.34</td>
+      <td>15.03</td>
+      <td>...</td>
+      <td>4.05</td>
+      <td>27.47</td>
+      <td>136.72</td>
+      <td>12.68</td>
+      <td>87.35</td>
+      <td>28.50</td>
+      <td>21.01</td>
+      <td>20.93</td>
+      <td>12.98</td>
+      <td>21.65</td>
+    </tr>
+    <tr>
+      <th>2019-06-10</th>
+      <td>9.60</td>
+      <td>48.64</td>
+      <td>46.51</td>
+      <td>40.30</td>
+      <td>71.91</td>
+      <td>37.20</td>
+      <td>78.88</td>
+      <td>39.47</td>
+      <td>38.69</td>
+      <td>15.74</td>
+      <td>...</td>
+      <td>4.21</td>
+      <td>27.29</td>
+      <td>142.45</td>
       <td>12.50</td>
-      <td>84.36</td>
-      <td>37.04</td>
-      <td>22.31</td>
-      <td>24.88</td>
-      <td>16.14</td>
-      <td>25.79</td>
-    </tr>
-    <tr>
-      <th>2019-05-03</th>
-      <td>12.60</td>
-      <td>51.81</td>
-      <td>46.22</td>
-      <td>46.85</td>
-      <td>65.30</td>
-      <td>37.58</td>
-      <td>80.45</td>
-      <td>38.36</td>
-      <td>37.43</td>
-      <td>21.96</td>
-      <td>...</td>
-      <td>4.77</td>
-      <td>28.36</td>
-      <td>133.86</td>
-      <td>12.73</td>
-      <td>86.49</td>
-      <td>37.50</td>
-      <td>22.99</td>
-      <td>25.47</td>
-      <td>17.61</td>
-      <td>26.94</td>
-    </tr>
-    <tr>
-      <th>2019-05-06</th>
-      <td>12.69</td>
-      <td>49.35</td>
-      <td>46.18</td>
-      <td>44.95</td>
-      <td>65.84</td>
-      <td>37.39</td>
-      <td>80.58</td>
-      <td>38.41</td>
-      <td>37.62</td>
-      <td>22.08</td>
-      <td>...</td>
-      <td>4.86</td>
-      <td>28.36</td>
-      <td>132.62</td>
-      <td>12.78</td>
-      <td>87.51</td>
-      <td>36.98</td>
-      <td>23.00</td>
-      <td>25.08</td>
-      <td>17.02</td>
-      <td>26.53</td>
-    </tr>
-    <tr>
-      <th>2019-05-07</th>
-      <td>12.08</td>
-      <td>47.38</td>
-      <td>45.06</td>
-      <td>43.66</td>
-      <td>64.64</td>
-      <td>36.63</td>
-      <td>79.80</td>
-      <td>37.96</td>
-      <td>36.60</td>
-      <td>21.96</td>
-      <td>...</td>
-      <td>4.77</td>
-      <td>27.66</td>
-      <td>130.74</td>
-      <td>12.62</td>
-      <td>85.18</td>
-      <td>35.71</td>
-      <td>22.62</td>
-      <td>24.73</td>
-      <td>16.45</td>
-      <td>26.12</td>
-    </tr>
-    <tr>
-      <th>2019-05-08</th>
-      <td>12.06</td>
-      <td>47.35</td>
-      <td>45.31</td>
-      <td>43.13</td>
-      <td>67.00</td>
-      <td>36.25</td>
-      <td>79.84</td>
-      <td>37.93</td>
-      <td>36.29</td>
-      <td>19.08</td>
-      <td>...</td>
-      <td>4.73</td>
-      <td>27.59</td>
-      <td>131.16</td>
-      <td>12.52</td>
-      <td>84.56</td>
-      <td>35.25</td>
-      <td>22.68</td>
-      <td>24.56</td>
-      <td>16.31</td>
-      <td>25.95</td>
+      <td>87.97</td>
+      <td>28.39</td>
+      <td>21.12</td>
+      <td>20.57</td>
+      <td>13.19</td>
+      <td>21.46</td>
     </tr>
   </tbody>
 </table>
 <p>5 rows × 601 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp600'].close[['AAOI', 'AAON', 'AAT', 'AAWW', 'AAXN']].tail()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>AAOI</th>
+      <th>AAON</th>
+      <th>AAT</th>
+      <th>AAWW</th>
+      <th>AAXN</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2019-06-04</th>
+      <td>9.19</td>
+      <td>47.80</td>
+      <td>45.11</td>
+      <td>39.70</td>
+      <td>67.63</td>
+    </tr>
+    <tr>
+      <th>2019-06-05</th>
+      <td>9.23</td>
+      <td>48.08</td>
+      <td>46.39</td>
+      <td>38.62</td>
+      <td>68.00</td>
+    </tr>
+    <tr>
+      <th>2019-06-06</th>
+      <td>9.30</td>
+      <td>48.18</td>
+      <td>46.39</td>
+      <td>37.99</td>
+      <td>67.97</td>
+    </tr>
+    <tr>
+      <th>2019-06-07</th>
+      <td>9.50</td>
+      <td>48.85</td>
+      <td>46.61</td>
+      <td>39.88</td>
+      <td>69.18</td>
+    </tr>
+    <tr>
+      <th>2019-06-10</th>
+      <td>9.60</td>
+      <td>48.64</td>
+      <td>46.51</td>
+      <td>40.30</td>
+      <td>71.91</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 
@@ -1935,199 +2643,303 @@ sp_data['sp600'].close.describe()
   <tbody>
     <tr>
       <th>count</th>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>130.000000</td>
-      <td>1258.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>152.000000</td>
+      <td>1116.000000</td>
       <td>...</td>
-      <td>1254.000000</td>
-      <td>1258.00000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1072.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
-      <td>1258.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1094.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
     </tr>
     <tr>
       <th>mean</th>
-      <td>26.698299</td>
-      <td>29.224559</td>
-      <td>37.109340</td>
-      <td>49.388490</td>
-      <td>30.650918</td>
-      <td>36.185047</td>
-      <td>67.231924</td>
-      <td>32.523740</td>
-      <td>29.667508</td>
-      <td>15.859793</td>
+      <td>27.743244</td>
+      <td>30.918709</td>
+      <td>38.058995</td>
+      <td>50.943889</td>
+      <td>33.501694</td>
+      <td>38.263235</td>
+      <td>67.166470</td>
+      <td>33.834044</td>
+      <td>30.553658</td>
+      <td>17.025923</td>
       <td>...</td>
-      <td>7.591375</td>
-      <td>26.06919</td>
-      <td>74.501331</td>
-      <td>10.776059</td>
-      <td>63.070520</td>
-      <td>26.637300</td>
-      <td>17.379708</td>
-      <td>26.422728</td>
-      <td>18.881719</td>
-      <td>22.917444</td>
+      <td>6.638630</td>
+      <td>26.699762</td>
+      <td>75.499521</td>
+      <td>10.873052</td>
+      <td>64.134756</td>
+      <td>26.901846</td>
+      <td>17.466643</td>
+      <td>26.470261</td>
+      <td>18.461373</td>
+      <td>21.713634</td>
     </tr>
     <tr>
       <th>std</th>
-      <td>16.993067</td>
-      <td>7.540154</td>
-      <td>3.538491</td>
-      <td>10.202854</td>
-      <td>15.357067</td>
-      <td>10.727266</td>
-      <td>10.031661</td>
-      <td>5.652387</td>
-      <td>2.884428</td>
-      <td>6.630228</td>
+      <td>17.739201</td>
+      <td>7.217437</td>
+      <td>3.162768</td>
+      <td>9.630046</td>
+      <td>15.846801</td>
+      <td>9.777167</td>
+      <td>10.615101</td>
+      <td>4.977216</td>
+      <td>3.460363</td>
+      <td>6.232940</td>
       <td>...</td>
-      <td>1.937716</td>
-      <td>3.23872</td>
-      <td>27.062866</td>
-      <td>1.389293</td>
-      <td>10.452208</td>
-      <td>5.747909</td>
-      <td>3.191832</td>
-      <td>6.741623</td>
-      <td>4.449880</td>
-      <td>6.830660</td>
+      <td>1.439664</td>
+      <td>2.965398</td>
+      <td>29.980650</td>
+      <td>1.427787</td>
+      <td>11.103416</td>
+      <td>6.054634</td>
+      <td>3.218554</td>
+      <td>6.868666</td>
+      <td>4.585663</td>
+      <td>6.338225</td>
     </tr>
     <tr>
       <th>min</th>
       <td>8.380000</td>
-      <td>16.343700</td>
-      <td>29.352300</td>
-      <td>31.400000</td>
-      <td>10.500000</td>
-      <td>18.903300</td>
+      <td>18.515200</td>
+      <td>30.623200</td>
+      <td>33.370000</td>
+      <td>14.500000</td>
+      <td>21.938400</td>
       <td>45.070000</td>
-      <td>22.347500</td>
+      <td>24.986400</td>
       <td>20.930200</td>
-      <td>6.240000</td>
+      <td>8.960000</td>
       <td>...</td>
-      <td>4.390000</td>
-      <td>19.78740</td>
+      <td>3.990000</td>
+      <td>20.496900</td>
       <td>26.700000</td>
-      <td>7.392600</td>
-      <td>43.328400</td>
+      <td>7.337200</td>
+      <td>43.206400</td>
       <td>14.741000</td>
       <td>10.508700</td>
-      <td>12.051000</td>
-      <td>8.168700</td>
+      <td>11.940500</td>
+      <td>8.155900</td>
       <td>11.450000</td>
     </tr>
     <tr>
       <th>25%</th>
-      <td>15.060000</td>
-      <td>22.108125</td>
-      <td>35.180575</td>
-      <td>40.910000</td>
-      <td>21.952500</td>
-      <td>25.651450</td>
-      <td>59.167500</td>
-      <td>27.874650</td>
-      <td>28.616775</td>
-      <td>10.520000</td>
+      <td>14.930000</td>
+      <td>23.764775</td>
+      <td>36.253125</td>
+      <td>42.410000</td>
+      <td>23.020000</td>
+      <td>29.015975</td>
+      <td>58.387500</td>
+      <td>29.762450</td>
+      <td>28.943125</td>
+      <td>11.270000</td>
       <td>...</td>
-      <td>6.081100</td>
-      <td>22.95650</td>
-      <td>50.137500</td>
-      <td>9.812600</td>
-      <td>54.135425</td>
-      <td>23.000950</td>
-      <td>14.881325</td>
-      <td>21.071525</td>
-      <td>16.473675</td>
-      <td>17.500000</td>
+      <td>5.551425</td>
+      <td>23.872600</td>
+      <td>48.457500</td>
+      <td>9.865475</td>
+      <td>53.693475</td>
+      <td>22.452275</td>
+      <td>14.932475</td>
+      <td>21.132900</td>
+      <td>15.543625</td>
+      <td>17.127500</td>
     </tr>
     <tr>
       <th>50%</th>
-      <td>20.035000</td>
-      <td>29.230200</td>
-      <td>37.422800</td>
-      <td>49.150000</td>
-      <td>25.005000</td>
-      <td>34.638350</td>
-      <td>67.240000</td>
-      <td>31.102800</td>
-      <td>29.716800</td>
-      <td>13.650000</td>
+      <td>20.410000</td>
+      <td>32.401300</td>
+      <td>37.858000</td>
+      <td>50.895000</td>
+      <td>26.100000</td>
+      <td>37.445250</td>
+      <td>67.020000</td>
+      <td>33.295050</td>
+      <td>30.315400</td>
+      <td>15.950000</td>
       <td>...</td>
-      <td>7.017050</td>
-      <td>26.39365</td>
-      <td>76.692500</td>
-      <td>10.822850</td>
-      <td>60.847400</td>
-      <td>26.401450</td>
-      <td>17.724600</td>
-      <td>26.908300</td>
-      <td>19.274100</td>
-      <td>22.075000</td>
+      <td>6.430150</td>
+      <td>27.307200</td>
+      <td>77.015000</td>
+      <td>10.956150</td>
+      <td>62.285450</td>
+      <td>27.334650</td>
+      <td>17.782900</td>
+      <td>27.297250</td>
+      <td>18.884700</td>
+      <td>20.697500</td>
     </tr>
     <tr>
       <th>75%</th>
-      <td>33.927500</td>
-      <td>35.262375</td>
-      <td>39.002725</td>
-      <td>56.542500</td>
-      <td>33.810000</td>
-      <td>45.666850</td>
-      <td>73.522500</td>
-      <td>37.398775</td>
-      <td>31.059900</td>
-      <td>20.950000</td>
+      <td>37.910000</td>
+      <td>35.719525</td>
+      <td>39.674850</td>
+      <td>57.950000</td>
+      <td>42.792500</td>
+      <td>46.383700</td>
+      <td>74.500000</td>
+      <td>38.071300</td>
+      <td>32.236275</td>
+      <td>21.362500</td>
       <td>...</td>
-      <td>8.848850</td>
-      <td>29.16485</td>
-      <td>97.620000</td>
-      <td>11.707150</td>
-      <td>71.798750</td>
-      <td>30.380675</td>
-      <td>19.508725</td>
-      <td>30.757175</td>
-      <td>22.262275</td>
-      <td>27.030000</td>
+      <td>7.361450</td>
+      <td>29.385200</td>
+      <td>104.135000</td>
+      <td>11.843275</td>
+      <td>74.294575</td>
+      <td>31.442500</td>
+      <td>19.650875</td>
+      <td>30.892075</td>
+      <td>21.879050</td>
+      <td>24.750000</td>
     </tr>
     <tr>
       <th>max</th>
       <td>99.610000</td>
-      <td>51.810000</td>
+      <td>51.631400</td>
       <td>46.770000</td>
       <td>74.000000</td>
       <td>74.890000</td>
       <td>57.403000</td>
       <td>95.540000</td>
       <td>43.220900</td>
-      <td>37.620000</td>
+      <td>38.690000</td>
       <td>36.625000</td>
       <td>...</td>
-      <td>12.678000</td>
-      <td>31.60290</td>
-      <td>133.860000</td>
-      <td>14.214700</td>
-      <td>87.510000</td>
+      <td>10.596600</td>
+      <td>31.602900</td>
+      <td>142.450000</td>
+      <td>14.108200</td>
+      <td>87.970000</td>
       <td>39.469500</td>
       <td>24.438200</td>
-      <td>42.148900</td>
-      <td>30.787100</td>
+      <td>41.762300</td>
+      <td>30.738900</td>
       <td>41.400000</td>
     </tr>
   </tbody>
 </table>
 <p>8 rows × 601 columns</p>
+</div>
+
+
+
+
+```python
+sp_data['sp600'].close[['AAOI', 'AAON', 'AAT', 'AAWW', 'AAXN']].describe()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Symbols</th>
+      <th>AAOI</th>
+      <th>AAON</th>
+      <th>AAT</th>
+      <th>AAWW</th>
+      <th>AAXN</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+      <td>1116.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>27.743244</td>
+      <td>30.918709</td>
+      <td>38.058995</td>
+      <td>50.943889</td>
+      <td>33.501694</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>17.739201</td>
+      <td>7.217437</td>
+      <td>3.162768</td>
+      <td>9.630046</td>
+      <td>15.846801</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>8.380000</td>
+      <td>18.515200</td>
+      <td>30.623200</td>
+      <td>33.370000</td>
+      <td>14.500000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>14.930000</td>
+      <td>23.764775</td>
+      <td>36.253125</td>
+      <td>42.410000</td>
+      <td>23.020000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>20.410000</td>
+      <td>32.401300</td>
+      <td>37.858000</td>
+      <td>50.895000</td>
+      <td>26.100000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>37.910000</td>
+      <td>35.719525</td>
+      <td>39.674850</td>
+      <td>57.950000</td>
+      <td>42.792500</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>99.610000</td>
+      <td>51.631400</td>
+      <td>46.770000</td>
+      <td>74.000000</td>
+      <td>74.890000</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 

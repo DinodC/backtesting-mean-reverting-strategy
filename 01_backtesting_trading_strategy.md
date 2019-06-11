@@ -4,7 +4,7 @@
 ## How To Scrape S&P Constituents Tickers Using Python
 
 ## Introduction
-Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected. 
+Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.
 
 In this article, I will discuss the initial step in the backtesting process: determining the universe of securities. If we focus our attention on trading US equities, then a natural choice is the Standard and Poor's 500 Index which is composed of shares of the 500 largest companies in the United States. The S&P 500 also provides the most liquid stocks. We can also consider the S&P MidCap 400 and S&P SmallCap 600 indices.
 
@@ -29,7 +29,7 @@ The S&P 600 has 601 constituents with a median capitalization of USD 1.2B.
 After identifying potential universe of stocks candidates, we need to collect the list of constituents for each candidate universe. The list of constituents is not available on the official S&P Dow Jones Indices [website](https://us.spindices.com). The constituents are only provided to product subscribers. We therefore, need to find alternative data providers. After a quick search on Google, two candidates are available: [Wikipedia](https://en.wikipedia.org); and [Barchart](https://www.barchart.com). Wikipedia provides the S&P constituents in the form of a HTML table, which we will need to retrieve using Python package BeautifulSoup for web scraping. Barchart provides the S&P constituents as convenient downloadable CSV files. You just need to create a basic account with them, which fortunately is free.
 
 ## Step By Step
-1. Collect the S&P tickers from Wikipedia, and then from Barchart. 
+1. Collect the S&P tickers from Wikipedia, and then from Barchart.
 2. Compare the S&P symbols from the two providers.
 
 You can find the code below on https://github.com/DinodC/backtesting-trading-strategy.
@@ -88,25 +88,25 @@ The code below scrapes data using Python package BeautifulSoup, and saves the ex
 
 ```python
 for i in input_file:
-    
+
     # Get URL    
     r = re.get(input_file[i])
-    
-    # Create a soup object 
+
+    # Create a soup object
     soup = BeautifulSoup(r.text)
-    
+
     # Find S&P constituents table
     table = soup.find('table', attrs={'class', 'wikitable sortable'})
-    
+
     # Get the rows containing the tickers
     tickers = table.find_all('a', attrs={'class', 'external text'})
     # find_all returns tickers and SEC fillings, get tickers only
     tickers = tickers[::2]
-    
+
     # Create a list containing the tickers
     for j in range(len(tickers)):
         sp_wikipedia[i].append(tickers[j].text)
-        
+
     # Save the list to a file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_wikipedia[i], f)
@@ -220,16 +220,16 @@ The code below reads the data from the csv file, stores it to a DataFrame object
 
 ```python
 for i in input_file:
-    
+
     # Read data to a DataFrame
     data = pd.read_csv(input_file[i])
     # Exclude the last line since it does not contain a ticker
     data = data[:-1]
-    
+
     # Create a list containing the tickers
     for j in range(len(data['Symbol'])):
         sp_barchart[i].append(data['Symbol'].iloc[j])
-        
+
     # Save the list to a file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_barchart[i], f)
@@ -331,7 +331,7 @@ diff_wikipedia_barchart
 
 
 
-    ['BMS', 'CTVA', 'DD']
+    []
 
 
 
