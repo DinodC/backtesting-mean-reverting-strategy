@@ -6,9 +6,9 @@
 ## Introduction
 Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.  
 
-In the previous articles, I illustrated the first two steps in the backtesting process of [determining the universe of stocks](https://medium.com/@dinodecastro/backtesting-a-trading-strategy-part-1-11229d380fb9), and [collecting historical data for each constituent](https://medium.com/@dinodecastro/backtesting-a-trading-strategy-part-2-2b4bedd3712d). In this article, I will illustrate the last step of the process: implementing a mean-reverting trading strategy.
+In the previous articles, I illustrated the first two steps in the backtesting process of determining the universe of stocks, and collecting historical data for each constituent. In this article, I will illustrate the last step of the process: implementing a mean-reverting trading strategy.
 
-## A Mean-Reverting Trading Strategy
+## A Mean-reverting Trading Strategy
 We implement a mean-reverting trading strategy based on [Khandani and Lo](http://web.mit.edu/Alo/www/Papers/august07.pdf). The idea is to buy the previous day's "losers", and sell the previous day's "winners". Stocks which underperform the market average are classified as "losers"; while stocks which outperform the market average are classified as "winners".
 
 For each stock $i$, we calculate the weight $w_{i, t}$ at time $t$
@@ -38,30 +38,10 @@ Import packages
 
 ```python
 import numpy as np
-```
-
-
-```python
 import pandas as pd
-```
-
-
-```python
 from pandas import Series, DataFrame
-```
-
-
-```python
 import pickle
-```
-
-
-```python
 import matplotlib.pyplot as plt
-```
-
-
-```python
 %matplotlib inline
 ```
 
@@ -100,16 +80,16 @@ Retrieve S&P historical data
 
 ```python
 for i in id:
-    # Load data
+    # Load data 
     with open(input_file[i], 'rb') as f:
         sp_data[i] = pickle.load(f)
     f.close()
-
+    
     # Select close prices
     sp_data[i] = sp_data[i].close
 ```
 
-### Implement A Mean-Reverting Trading Strategy
+### Implement A Mean-reverting Trading Strategy
 
 Create a dictionary to map each id to a S&P returns data
 
@@ -178,16 +158,16 @@ Implement the mean-reverting trading strategy on stock universes: S&P 500, S&P M
 for i in id:
     # Calculate the returns
     sp_returns[i] = sp_data[i].pct_change()
-
+    
     # Calculate the equally weighted market returns
     sp_market_returns[i] = sp_returns[i].mean(axis='columns')
-
+    
     # Calculate the weights of each stock
     sp_weights[i] = - (sp_returns[i].sub(sp_market_returns[i], axis='index')).div(sp_data[i].count(axis='columns'), axis='index')
-
+    
     # Adjust the weights to 0 if price or return is NaN
     sp_weights[i][sp_data[i].isna() | sp_data[i].shift(periods=1).isna()] = 0
-
+    
     # Calculate the daily pnl
     # Idea is to buy yesterday's losers, and sell yesterday's winners
     sp_pnl[i] = (sp_weights[i].shift(periods=1)).mul(sp_returns[i], axis='index')
@@ -203,12 +183,12 @@ The Information ratio measures the excess returns of a trading strategy over a b
 $$ IR = \frac{r_{Strategy} - r_{Benchmark}}{\sigma_{Strategy}}. $$
 
 In practice, we usually calculate the annualized IR as follows:
-1. Calculate the average and standard deviation of daily returns
+1. Calculate the average and standard deviation of daily returns 
 2. Annualize the two metrics
 3. Compute the annualized return of the benchmark
 
 #### Sharpe Ratio
-The Sharpe ratio is a special case of the Information ratio where the benchmark is set to the risk-free rate. It allows for decomposition of a trading strategy's profit and losses into risky and risk-free parts. The Sharpe ratio is popular because it facilitates comparison of different trading strategies using different benchmarks.
+The Sharpe ratio is a special case of the Information ratio where the benchmark is set to the risk-free rate. It allows for decomposition of a trading strategy's profit and losses into risky and risk-free parts. The Sharpe ratio is popular because it facilitates comparison of different trading strategies using different benchmarks. 
 
 #### How To Calculate The Sharpe Ratio
 The Sharpe ratio calculation depends on the trading strategy deployed.
@@ -257,22 +237,22 @@ for i in id:
     avg_returns = []
     std_returns = []
     sharpe = []
-
+    
     # Calculate performance measures
     for j in range(len(period) - 1):
         # Period of observation
         start = period[j]
         end = period[j + 1]
-
+        
         # Calculate average daily returns
         avg_returns.append(sp_pnl_net[i][start:end].mean())
-
+        
         # Calculate standard deviation of daily returns
         std_returns.append(sp_pnl_net[i][start:end].std())
-
+        
         # Calculate Sharpe ratio
         sharpe.append(np.sqrt(252) * avg_returns[j] / std_returns[j])
-
+        
     # Update performance measures DataFrame
     sp_performance[i] = pd.DataFrame({'Avg Daily Returns': avg_returns,
                                       'Std Daily Returns': std_returns,
@@ -280,7 +260,7 @@ for i in id:
                                     index=['2014', '2015', '2016', '2017', '2018'])
 ```
 
-#### Comparison Of The Mean-Reverting Strategy Using Different Stock Universes
+#### Comparison Of The Mean-reverting Strategy Using Different Stock Universes
 
 ##### Average Of Daily Returns
 
@@ -325,9 +305,9 @@ sp_avg_returns
   <tbody>
     <tr>
       <th>2014</th>
-      <td>0.0007%</td>
+      <td>0.0008%</td>
       <td>0.001%</td>
-      <td>0.0012%</td>
+      <td>0.0015%</td>
     </tr>
     <tr>
       <th>2015</th>
@@ -402,21 +382,21 @@ sp_std_returns
   <tbody>
     <tr>
       <th>2014</th>
-      <td>0.0049%</td>
+      <td>0.0052%</td>
       <td>0.0095%</td>
-      <td>0.0123%</td>
+      <td>0.0134%</td>
     </tr>
     <tr>
       <th>2015</th>
       <td>0.0029%</td>
       <td>0.0075%</td>
-      <td>0.0071%</td>
+      <td>0.0074%</td>
     </tr>
     <tr>
       <th>2016</th>
       <td>0.0068%</td>
       <td>0.0111%</td>
-      <td>0.012%</td>
+      <td>0.0125%</td>
     </tr>
     <tr>
       <th>2017</th>
@@ -479,33 +459,33 @@ sp_sharpe
   <tbody>
     <tr>
       <th>2014</th>
-      <td>2.363955</td>
-      <td>1.612314</td>
-      <td>1.492651</td>
+      <td>2.390120</td>
+      <td>1.710263</td>
+      <td>1.750619</td>
     </tr>
     <tr>
       <th>2015</th>
-      <td>-0.136814</td>
-      <td>-1.462997</td>
-      <td>0.896777</td>
+      <td>-0.136800</td>
+      <td>-1.462981</td>
+      <td>0.792153</td>
     </tr>
     <tr>
       <th>2016</th>
-      <td>-0.319982</td>
-      <td>-0.571094</td>
-      <td>1.291112</td>
+      <td>-0.319971</td>
+      <td>-0.571037</td>
+      <td>1.213862</td>
     </tr>
     <tr>
       <th>2017</th>
-      <td>1.535338</td>
-      <td>1.259514</td>
-      <td>2.358388</td>
+      <td>1.535340</td>
+      <td>1.259538</td>
+      <td>2.348185</td>
     </tr>
     <tr>
       <th>2018</th>
-      <td>1.813055</td>
-      <td>1.471451</td>
-      <td>1.326466</td>
+      <td>1.813091</td>
+      <td>1.471477</td>
+      <td>1.328564</td>
     </tr>
   </tbody>
 </table>
@@ -533,12 +513,12 @@ plt.legend(id)
 
 
 
-    <matplotlib.legend.Legend at 0x11a7be1d0>
+    <matplotlib.legend.Legend at 0x11ee8b5c0>
 
 
 
 
-![png](output_55_1.png)
+![png](output_50_1.png)
 
 
 ### Improvements To The Backtesting Process
@@ -550,4 +530,4 @@ Our focus should center on rendering the backtesting process as close to reality
 3. Survivorship bias is the absence of stocks in the investment universe belonging to companies who went bankrupt, merged or acquired.
 
 ## Conclusion
-In this article, we implemented a mean-reverting trading strategy and backtested it on our universe of stocks - the S&P 500, S&P MidCap 400 and S&P SmallCap 600 indices. The mean-reverting trading strategy performed best on the S&P 600 index which is composed of small-capitalization stocks. In the next articles, I will illustrate improvements to the backtesting process by including transaction costs, and correcting for potential biasses.
+In this article, we implemented a mean-reverting trading strategy and backtested it on our universe of stocks - the S&P 500, S&P MidCap 400 and S&P SmallCap 600 indices. The mean-reverting trading strategy performed best on the S&P 600 index which is composed of small-capitalization stocks. In the next articles, I will illustrate improvements to the backtesting process by including transaction costs, and correcting for potential biasses. 
