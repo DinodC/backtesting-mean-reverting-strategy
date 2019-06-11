@@ -4,7 +4,7 @@
 ## How To Scrape S&P Constituents Tickers Using Python
 
 ## Introduction
-Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected.
+Backtesting is a tool to measure the performance of a trading strategy using historical data. The backtesting process consists of three parts: 1. determining the universe of securities where we will invest in (e.g. equity or fixed income? US or emerging markets?); 2. gathering historical data for the universe of securities; and 3. implementing a trading strategy using the historical data collected. 
 
 In this article, I will discuss the initial step in the backtesting process: determining the universe of securities. If we focus our attention on trading US equities, then a natural choice is the Standard and Poor's 500 Index which is composed of shares of the 500 largest companies in the United States. The S&P 500 also provides the most liquid stocks. We can also consider the S&P MidCap 400 and S&P SmallCap 600 indices.
 
@@ -12,26 +12,25 @@ In this article, I will discuss the initial step in the backtesting process: det
 This section provides a comparison of the different S&P indices which can be considered as possible universe of stocks.
 
 ### S&P 500 Index
-- is a market capitalization-weighted index of the 500 largest US companies
-- is viewed as the best gauge of large-cap US equity market
-- has 505 constituents with a median capitalization of USD 22.3B
+The S&P 500 index (or S&P 500) is a market capitalization-weighted index of the 500 largest US companies.
+It is viewed as the best gauge of large-cap US equity market.
+The S&P 500 has 505 constituents with a median capitalization of USD 22.3B.
 
 ### S&P MidCap 400 Index
-- is a market capitalization-weighted index
-- serves as a benchmark for mid-cap US equity market
-- has 400 constituents with a median capitalization of USD 4.2B
+The S&P 400 index (or S&P 400) is a market capitalization-weighted index.
+It serves as a benchmark for mid-cap US equity market.
+The S&P 400 has 400 constituents with a median capitalization of USD 4.2B.
 
 ### S&P SmallCap 600 Index
-- is a market capitalization-weighted index
-- serves as a benchmark for small-cap US equity market
-- has 601 constituents with a median capitalization of USD 1.2B
+The S&P 600 index (or S&P 600) is a market capitalization-weighted index.
+It serves as a benchmark for small-cap US equity market
+The S&P 600 has 601 constituents with a median capitalization of USD 1.2B.
 
-After identifying potential universe of stocks candidates, we need to collect the list of constituents for each candidate universe. The list of constituents is not available on the official S&P Dow Jones Indices website https://us.spindices.com. The constituents are only provided to product subscribers. We therefore, need to find alternative data providers. After a quick search on Google, two candidates are available: [Wikipedia](https://en.wikipedia.org); and [Barchart](https://www.barchart.com). Wikipedia provides the S&P constituents in the form of a HTML table, which we will need to retrieve using Python package [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) for web scraping. Barchart provides the S&P constituents as convenient downloadable CSV files. You just need to create a basic account with them, which fortunately is free.
+After identifying potential universe of stocks candidates, we need to collect the list of constituents for each candidate universe. The list of constituents is not available on the official S&P Dow Jones Indices [website](https://us.spindices.com). The constituents are only provided to product subscribers. We therefore, need to find alternative data providers. After a quick search on Google, two candidates are available: [Wikipedia](https://en.wikipedia.org); and [Barchart](https://www.barchart.com). Wikipedia provides the S&P constituents in the form of a HTML table, which we will need to retrieve using Python package BeautifulSoup for web scraping. Barchart provides the S&P constituents as convenient downloadable CSV files. You just need to create a basic account with them, which fortunately is free.
 
-## Retrieving S&P Constituents
-### Step By Step
-1. Collect the S&P tickers from Wikipedia, and then from Barchart.
-2. Compare the S&P constituents from the two providers.
+## Step By Step
+1. Collect the S&P tickers from Wikipedia, and then from Barchart. 
+2. Compare the S&P symbols from the two providers.
 
 You can find the code below on https://github.com/DinodC/backtesting-trading-strategy.
 
@@ -40,20 +39,8 @@ Import packages
 
 ```python
 import pandas as pd
-```
-
-
-```python
 import requests as re
-```
-
-
-```python
 from bs4 import BeautifulSoup
-```
-
-
-```python
 import pickle
 ```
 
@@ -66,7 +53,7 @@ Set an id for each index
 id = ['sp500', 'sp400', 'sp1000']
 ```
 
-Set the pages we want to scrape S&P indices data from https://en.wikipedia.org. Note that page for S&P 600 list of constituents does not exists. However, we can deduce the list from S&P 1000 which is just a combination of the S&P 400 and S&P 600.
+Set the pages we want to scrape S&P indices data from Wikipedia. Note that page for S&P 600 list of constituents does not exists. However, we can deduce the list from S&P 1000 which is just a combination of the S&P 400 and S&P 600.
 
 
 ```python
@@ -96,35 +83,34 @@ sp_wikipedia = {'sp500': sp500_wikipedia,
                 'sp1000': sp1000_wikipedia}
 ```
 
-The code below scrapes data using [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and saves the extracted data using [pickle](https://docs.python.org/3/library/pickle.html)
+The code below scrapes data using Python package BeautifulSoup, and saves the extracted data using Python package pickle
 
 
 ```python
 for i in input_file:
-
+    
     # Get URL    
     r = re.get(input_file[i])
-
-    # Create a soup object
+    
+    # Create a soup object 
     soup = BeautifulSoup(r.text)
-
+    
     # Find S&P constituents table
     table = soup.find('table', attrs={'class', 'wikitable sortable'})
-
+    
     # Get the rows containing the tickers
     tickers = table.find_all('a', attrs={'class', 'external text'})
     # find_all returns tickers and SEC fillings, get tickers only
     tickers = tickers[::2]
-
+    
     # Create a list containing the tickers
     for j in range(len(tickers)):
         sp_wikipedia[i].append(tickers[j].text)
-
+        
     # Save the list to a file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_wikipedia[i], f)
     f.close()
-
 ```
 
 Check the number of constituents, it should be equal to 505
@@ -190,7 +176,7 @@ len(sp600_wikipedia)
 
 
 
-In total, Wikipedia tickers sum up to 598 only, while [S&P Dow Jones Indices](https://www.spindices.com/indices/equity/sp-600) indicate that there should be 601. The missing tickers, 3 in total, could be due to timing difference in updating the S&P 400 and S&P 1000 lists.
+In total, Wikipedia tickers sum up to 598 only, while the S&P Dow Jones Indices website indicates that there should be 601. The missing tickers, 3 in total, could be due to timing difference in updating the S&P 400 and S&P 1000 lists.
 
 ### From Barchart
 
@@ -199,7 +185,7 @@ In total, Wikipedia tickers sum up to 598 only, while [S&P Dow Jones Indices](ht
 id = ['sp500', 'sp400', 'sp600']
 ```
 
-We download the below files in csv format from https://www.barchart.com. Note that you need to sign up first, free of charge, before getting access.
+We download the below files in csv format from Barhcart. Note that you need to sign up first, free of charge, before getting access.
 
 
 ```python
@@ -229,28 +215,28 @@ sp_barchart = {'sp500': sp500_barchart,
               'sp600': sp600_barchart}
 ```
 
-The code below reads the data from the csv file, stores it to a DataFrame object, and saves the extracted information using [pickle](https://docs.python.org/3/library/pickle.html)
+The code below reads the data from the csv file, stores it to a DataFrame object, and saves the extracted information using pickle
 
 
 ```python
 for i in input_file:
-
+    
     # Read data to a DataFrame
     data = pd.read_csv(input_file[i])
     # Exclude the last line since it does not contain a ticker
     data = data[:-1]
-
+    
     # Create a list containing the tickers
     for j in range(len(data['Symbol'])):
         sp_barchart[i].append(data['Symbol'].iloc[j])
-
+        
     # Save the list to a file
     with open(output_file[i], 'wb') as f:
         pickle.dump(sp_barchart[i], f)
     f.close()
 ```
 
-Check the number of constituents, it should be equal to 505 according to [S&P Dow Jones Indices](https://us.spindices.com/indices/equity/sp-500)
+Check the number of constituents, it should be equal to 505 according to S&P Dow Jones Indices website
 
 
 ```python
@@ -264,7 +250,7 @@ len(sp500_barchart)
 
 
 
-Check the number of constituents, it should be equal to 400 according to [S&P Dow Jones Indices](https://us.spindices.com/indices/equity/sp-400)
+Check the number of constituents, it should be equal to 400 according to S&P Dow Jones Indices website
 
 
 ```python
@@ -278,7 +264,7 @@ len(sp400_barchart)
 
 
 
-Check the number of constituents, it should be equal to 601 according to [S&P Dow Jones Indices](https://us.spindices.com/indices/equity/sp-600)
+Check the number of constituents, it should be equal to 601 according to S&P Dow Jones Indices website
 
 
 ```python
@@ -301,10 +287,6 @@ Sort the lists
 
 ```python
 sp500_wikipedia.sort()
-```
-
-
-```python
 sp500_barchart.sort()
 ```
 
@@ -349,7 +331,7 @@ diff_wikipedia_barchart
 
 
 
-    []
+    ['BMS', 'CTVA', 'DD']
 
 
 
@@ -362,10 +344,6 @@ Sort the lists
 
 ```python
 sp400_wikipedia.sort()
-```
-
-
-```python
 sp400_barchart.sort()
 ```
 
@@ -410,7 +388,7 @@ diff_wikipedia_barchart[:10]
 
 
 
-    ['DNB', 'ODP', 'IDTI', 'LPNT', 'SPN', 'EGN', 'AKRX', 'NBR', 'ATO', 'WTW']
+    ['LPNT', 'NBR', 'AHL', 'DRQ', 'SPN', 'WAB', 'DNB', 'EGN', 'JKHY', 'GPOR']
 
 
 
@@ -441,7 +419,7 @@ diff_barchart_wikipedia[:10]
 
 
 
-    ['NGVT', 'EQT', 'YELP', 'OLED', 'BHF', 'TREX', 'GT', 'CACI', 'BRX', 'CZR']
+    ['TREX', 'PEB', 'NGVT', 'XPO', 'CVET', 'PRSP', 'BHF', 'REZI', 'AMED', 'SRCL']
 
 
 
@@ -514,7 +492,7 @@ diff_wikipedia_barchart[:10]
 
 
 
-    ['GOV', 'NGVT', 'MHLD', 'SONC', 'XOXO', 'EGL', 'MDXG', 'CVG', 'CLD', 'QHC']
+    ['GNBC', 'TREX', 'CLD', 'WCG', 'QHC', 'NGVT', 'FTK', 'DSW', 'PRSP', 'AMED']
 
 
 
@@ -545,7 +523,7 @@ diff_barchart_wikipedia[:10]
 
 
 
-    ['NRE', 'NEO', 'AX', 'ACA', 'ODP', 'MEDP', 'SGH', 'WRE', 'SPN', 'GTX']
+    ['TCMD', 'IIPR', 'NBR', 'CSII', 'CCS', 'DRQ', 'DBI', 'SPN', 'TRHC', 'LPI']
 
 
 
