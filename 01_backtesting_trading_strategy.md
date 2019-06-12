@@ -28,7 +28,8 @@ The S&P 600 has 601 constituents with a median capitalization of USD 1.2B.
 
 After identifying potential universe of stocks candidates, we need to collect the list of constituents for each candidate universe. The list of constituents is not available on the official S&P Dow Jones Indices [website](https://us.spindices.com). The constituents are only provided to product subscribers. We therefore, need to find alternative data providers. After a quick search on Google, two candidates are available: [Wikipedia](https://en.wikipedia.org); and [Barchart](https://www.barchart.com). Wikipedia provides the S&P constituents in the form of a HTML table, which we will need to retrieve using Python package BeautifulSoup for web scraping. Barchart provides the S&P constituents as convenient downloadable CSV files. You just need to create a basic account with them, which fortunately is free.
 
-## Step By Step
+## Scraping S&P Constituents Tickers
+### Step By Step
 1. Collect the S&P tickers from Wikipedia, and then from Barchart.
 2. Compare the S&P symbols from the two providers.
 
